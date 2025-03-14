@@ -73,7 +73,7 @@
         <profile>
             <id>local</id>
             <properties>
-                <profiles.active>dev</profiles.active>
+                <profiles.active>local</profiles.active>
                 <nacos.server>127.0.0.1:8848</nacos.server>
                 <nacos.discovery.group>DEFAULT_GROUP</nacos.discovery.group>
                 <nacos.config.group>DEFAULT_GROUP</nacos.config.group>
