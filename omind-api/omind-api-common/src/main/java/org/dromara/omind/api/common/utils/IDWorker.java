@@ -8,7 +8,7 @@ public class IDWorker {
     /**
      * 起始的时间戳
      */
-    private final static long START_STMP = 1480166465631L;
+    private final static long START_STMP = 1704038400000L;
 
     /**
      * 每一部分占用的位数
