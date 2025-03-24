@@ -10,6 +10,7 @@
 
     <modules>
         <module>omind-simplat</module>
+        <module>ykc-tcpplat</module>
         <module>omind-baseplat</module>
         <module>omind-userplat</module>
         <module>omind-mp</module>
