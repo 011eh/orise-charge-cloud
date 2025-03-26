@@ -443,6 +443,8 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, Message> {
                 return number.floatValue() / scale;
             } else if (number instanceof Double) {
                 return number.doubleValue() / scale;
+            } else if (number instanceof Byte) {
+                return number.byteValue() / scale;
             } else {
                 return number.doubleValue() / scale;
             }

@@ -79,6 +79,10 @@
                 <nacos.config.group>DEFAULT_GROUP</nacos.config.group>
                 <logstash.address>127.0.0.1:4560</logstash.address>
             </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <profile>
             <id>dev</id>
@@ -90,10 +94,6 @@
                 <nacos.config.group>DEFAULT_GROUP</nacos.config.group>
                 <logstash.address>172.25.0.18:4560</logstash.address>
             </properties>
-            <activation>
-                <!-- 默认环境 -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
             <id>prod</id>

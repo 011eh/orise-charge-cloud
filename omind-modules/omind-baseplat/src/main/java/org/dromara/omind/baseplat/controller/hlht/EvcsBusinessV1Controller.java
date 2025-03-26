@@ -20,9 +20,10 @@ import org.dromara.omind.baseplat.api.domain.dto.HlhtResult;
 import org.dromara.omind.baseplat.api.domain.entity.*;
 import org.dromara.omind.baseplat.api.domain.request.*;
 import org.dromara.omind.baseplat.api.domain.response.*;
-import org.dromara.omind.baseplat.api.service.*;
+import org.dromara.omind.baseplat.api.service.RemoteSeqService;
 import org.dromara.omind.baseplat.api.service.notify.RemoteNotifyConnectorStatusService;
 import org.dromara.omind.baseplat.api.service.pile.RemoteStartChargingService;
+import org.dromara.omind.baseplat.api.service.pile.RemoteStartChargingServiceTcp;
 import org.dromara.omind.baseplat.api.service.pile.RemoteStopChargingService;
 import org.dromara.omind.baseplat.client.UPlatNotificationV1Client;
 import org.dromara.omind.baseplat.client.UTcpInnerV1Client;
@@ -90,6 +91,9 @@ public class EvcsBusinessV1Controller {
      */
     @DubboReference
     RemoteStartChargingService remoteStartChargingService;
+
+    @DubboReference
+    RemoteStartChargingServiceTcp remoteStartChargingServiceTcp;
 
     /**
      * 远程停止充电服务
@@ -412,7 +416,9 @@ public class EvcsBusinessV1Controller {
                 if (queryStartChargeData.getBalance() == null || queryStartChargeData.getBalance().floatValue() <= 0) {
                     queryStartChargeData.setBalance(new BigDecimal("9999"));
                 }
-                int result = remoteStartChargingService.startCharging(sysOperator, queryStartChargeData);
+//                int result = remoteStartChargingService.startCharging(sysOperator, queryStartChargeData);
+                int result = remoteStartChargingServiceTcp.startCharging(sysOperator, queryStartChargeData);
+
                 if (result != 0) {
                     //创建订单失败
                     responseData.setStartChargeSeqStat((short) 4);

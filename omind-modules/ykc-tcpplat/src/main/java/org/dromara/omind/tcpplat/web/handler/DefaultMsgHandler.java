@@ -14,6 +14,7 @@ import org.dromara.omind.tcpplat.netty.protocol.model.message.down.PriceRuleResp
 import org.dromara.omind.tcpplat.netty.protocol.model.message.up.Heartbeat03;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.up.Login01;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.up.PriceRuleReq05;
+import org.dromara.omind.tcpplat.netty.service.ChannelManager;
 import org.dromara.omind.tcpplat.netty.service.IPileService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant.GUN_SET;
 import static org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant.NO_RESP;
 
 @Slf4j
@@ -30,14 +32,16 @@ import static org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant.N
 public class DefaultMsgHandler implements IMsgHandler<Message> {
 
     private final IPileService pileService;
+    private final HeartBeatProducer heartBeatProducer;
+    private final ChannelManager channelManager;
 
     @Override
     public Message handler(Message message) {
         byte type = message.getClass().getAnnotation(MessageType.class).type();
+        String pileCode = message.getPileCode();
         switch (type) {
             case UpMsgType.LOGIN_01:
                 Login01 loginMsg = (Login01) message;
-                String pileCode = loginMsg.getPileCode();
                 boolean authenticated = pileService.authenticate(pileCode);
                 LoginResp02 loginResp = new LoginResp02().setLoginResult(new ProtocolCode(authenticated));
                 log.info("pileCode：{}, 认证结果：{}", pileCode, authenticated);
@@ -45,6 +49,9 @@ public class DefaultMsgHandler implements IMsgHandler<Message> {
 
             case UpMsgType.HEARTBEAT_03:
                 Heartbeat03 heartbeat = (Heartbeat03) message;
+                String connectorId = heartbeat.getPileCode() + heartbeat.getGunCode();
+                heartBeatProducer.sendMsg(connectorId);
+                channelManager.get(pileCode).attr(GUN_SET).get().put(connectorId, System.currentTimeMillis());
                 return new HeartbeatResp04().setGunCode(heartbeat.getGunCode());
 
             case UpMsgType.PRICE_REQ_05:

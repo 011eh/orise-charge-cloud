@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ykc")
 public class NettyConfig {
-    private int port;
+    private int port = 8401;
     private int bossThreads;
     private int workerThreads;
-    private int readerIdleTime = 30;
+    private int readerIdleTime = 0;
 
     @Bean
     public NioEventLoopGroup bossGroup() {

@@ -3,12 +3,16 @@ package org.dromara.omind.tcpplat.netty.service;
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.omind.tcpplat.netty.exception.BusinessException;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.Message;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant.GUN_SET;
 import static org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant.SEQUENCE_ID;
 
 @Slf4j
@@ -18,13 +22,19 @@ public class ChannelManager {
     private final Map<String, Channel> channelMap = new ConcurrentHashMap<>();
     private final Map<Integer, CompletableFuture<Message>> responseFutures = new ConcurrentHashMap<>();
 
-    public void bind(String pileCode, Channel channel) {
-        channel.closeFuture().addListener((future) -> channelMap.remove(pileCode));
-        channelMap.put(pileCode, channel);
+    @NotNull
+    private static String getPileCode(String connectorID) {
+        return connectorID.substring(0, connectorID.length() - 2);
     }
 
     public Channel get(String pileCode) {
         return channelMap.get(pileCode);
+    }
+
+    public void bind(String pileCode, Channel channel) {
+        channel.closeFuture().addListener((future) -> channelMap.remove(pileCode));
+        channel.attr(GUN_SET).set(new HashMap<>());
+        channelMap.put(pileCode, channel);
     }
 
     public int getSequenceId(String pileCode) {
@@ -67,5 +77,21 @@ public class ChannelManager {
 
     public CompletableFuture<Message> getFuture(int sequenceId) {
         return responseFutures.remove(sequenceId);
+    }
+
+    public Channel getOrThrow(String pileCode) {
+        if (!channelMap.containsKey(pileCode)) {
+            throw new BusinessException(String.format("未找到对应 Channel，变编号：%s", pileCode));
+        }
+        return get(pileCode);
+    }
+
+    public boolean isOnline(String connectorId) {
+        Channel channel = get(getPileCode(connectorId));
+        if (channel == null) {
+            return false;
+        }
+        Long pingTime = channel.attr(GUN_SET).get().getOrDefault(connectorId, 0L);
+        return System.currentTimeMillis() - pingTime <= 6000;
     }
 }

@@ -15,7 +15,7 @@ public class MessageRegistry {
     
 
     static {
-        scanMessages("com.o11eh.ykc.netty.protocol.model.message");
+        scanMessages("org.dromara.omind.tcpplat.netty.protocol.model.message");
     }
 
     private static void scanMessages(String basePackage) {

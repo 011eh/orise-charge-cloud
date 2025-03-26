@@ -3,6 +3,8 @@ package org.dromara.omind.tcpplat.netty.common.constant;
 import io.netty.util.AttributeKey;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.Message;
 
+import java.util.Map;
+
 public class ProtocolConstant {
     // 起始标志
     public static final byte START_FLAG = 0x68;
@@ -25,6 +27,8 @@ public class ProtocolConstant {
     public static final AttributeKey<Boolean> AUTHENTICATED = AttributeKey.valueOf("authenticated");
     public static final AttributeKey<String> PILE_CODE = AttributeKey.valueOf("pileCode");
     public static final AttributeKey<Integer> SEQUENCE_ID = AttributeKey.valueOf("sequenceId");
+    public static final AttributeKey<Map<String, Long>> GUN_SET = AttributeKey.valueOf("gunMap");
+    public static final AttributeKey<Boolean> IS_CHARGING = AttributeKey.valueOf("charging");
 
     public static final Message NO_RESP = new Message() {
     };

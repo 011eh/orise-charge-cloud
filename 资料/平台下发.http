@@ -1,0 +1,13 @@
+@pileCode=55031412782305
+
+### 0x12
+localhost:8080/test/{{pileCode}}/12
+Content-Type: application/json
+
+### 0x34
+localhost:8080/test/{{pileCode}}/34
+Content-Type: application/json
+
+### 0x36
+localhost:8080/test/{{pileCode}}/36
+Content-Type: application/json

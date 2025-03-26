@@ -178,6 +178,7 @@ public class SimPileClient implements SimPileIClient {
             }
             lastRealtime = System.currentTimeMillis();
 
+            //状态 0离网 1空闲 2占用（未充电）3占用（充电）4占用（预约锁定）255故障
             short status = 0; //0离线 1故障 2空闲 3充电
             short isHome = 1;
             short isPlugn = 0;
