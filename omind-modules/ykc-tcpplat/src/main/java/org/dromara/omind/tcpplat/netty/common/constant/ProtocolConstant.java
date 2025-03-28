@@ -29,6 +29,7 @@ public class ProtocolConstant {
     public static final AttributeKey<Integer> SEQUENCE_ID = AttributeKey.valueOf("sequenceId");
     public static final AttributeKey<Map<String, Long>> GUN_SET = AttributeKey.valueOf("gunMap");
     public static final AttributeKey<Boolean> IS_CHARGING = AttributeKey.valueOf("charging");
+    public static final AttributeKey<String> TRADE_NO = AttributeKey.valueOf("tradeNo");
 
     public static final Message NO_RESP = new Message() {
     };

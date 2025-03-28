@@ -54,7 +54,6 @@ public class RemoteStopChargingServiceImpl implements RemoteStopChargingServiceT
             log.error(message.getFailReason());
             return 2;
         }
-//        simCenter.stopCharge(sysChargeOrder);
         return 0;
     }
 }

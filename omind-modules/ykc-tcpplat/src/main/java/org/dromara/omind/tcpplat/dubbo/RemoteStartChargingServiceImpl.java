@@ -20,6 +20,7 @@ import org.dromara.omind.baseplat.api.service.RemoteSysChargeOrderService;
 import org.dromara.omind.baseplat.api.service.RemoteSysConnectorService;
 import org.dromara.omind.baseplat.api.service.RemoteSysPriceService;
 import org.dromara.omind.baseplat.api.service.pile.RemoteStartChargingServiceTcp;
+import org.dromara.omind.tcpplat.netty.common.constant.ProtocolConstant;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.down.RemoteStartCharge34;
 import org.dromara.omind.tcpplat.netty.protocol.model.message.up.RemoteStartChargeReply33;
 import org.dromara.omind.tcpplat.netty.service.ChannelManager;
@@ -54,6 +55,7 @@ public class RemoteStartChargingServiceImpl implements RemoteStartChargingServic
     @Override
     public int startCharging(SysOperator sysOperator, QueryStartChargeData queryStartChargeData) throws BaseException {
         String connectorId = queryStartChargeData.getConnectorID();
+        String pileCode = connectorId.substring(0, connectorId.length() - 2);
         if (!channelManager.isOnline(connectorId)) {
             return 2;
         }
@@ -74,6 +76,7 @@ public class RemoteStartChargingServiceImpl implements RemoteStartChargingServic
             sysChargeOrder.setOperatorId(sysOperator.getOperatorId());
 
             String tradeNo = tradeNoGenerator.getTradeNo(connectorId);
+            channelManager.get(pileCode).attr(ProtocolConstant.TRADE_NO).set(tradeNo);
             sysChargeOrder.setTradeNo(tradeNo);
             sysChargeOrder.setConnectorId(connectorId);
             sysChargeOrder.setStartChargeSeqStat((short) 2);
@@ -96,7 +99,6 @@ public class RemoteStartChargingServiceImpl implements RemoteStartChargingServic
             charge34.setPhysicalCardNo("00000000D14B0A54");
             charge34.setAccountBalance(new BigDecimal("99.99").multiply(new BigDecimal(1000)).intValue());
             try {
-                String pileCode = connectorId.substring(0, connectorId.length() - 2);
                 RemoteStartChargeReply33 message = (RemoteStartChargeReply33) channelManager.writeWithResponse(pileCode, charge34);
                 sysChargeOrder.setFailReason(message.getFailReason());
             } catch (Exception e) {

@@ -30,6 +30,10 @@ public class RealTimeDataHandler implements IMsgHandler<Status13> {
     public Message handler(Status13 message) {
         Channel channel = channelManager.getOrThrow(message.getPileCode());
         if (message.getStatus() == 3) {
+            String tradeNo = channelManager.get(message.getPileCode()).attr(ProtocolConstant.TRADE_NO).get();
+            if (tradeNo != null) {
+                message.setTrxSeqNo(tradeNo);
+            }
             if (!channel.hasAttr(SIMULATION_LAST_DATA) || channel.attr(SIMULATION_LAST_DATA).get() == null) {
                 channel.attr(SIMULATION_LAST_DATA).set(message);
                 channel.attr(SIMULATION_START_TIME).set(System.currentTimeMillis());

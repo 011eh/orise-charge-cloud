@@ -25,6 +25,7 @@ import org.dromara.omind.baseplat.api.service.notify.RemoteNotifyConnectorStatus
 import org.dromara.omind.baseplat.api.service.pile.RemoteStartChargingService;
 import org.dromara.omind.baseplat.api.service.pile.RemoteStartChargingServiceTcp;
 import org.dromara.omind.baseplat.api.service.pile.RemoteStopChargingService;
+import org.dromara.omind.baseplat.api.service.pile.RemoteStopChargingServiceTcp;
 import org.dromara.omind.baseplat.client.UPlatNotificationV1Client;
 import org.dromara.omind.baseplat.client.UTcpInnerV1Client;
 import org.dromara.omind.baseplat.service.*;
@@ -100,6 +101,9 @@ public class EvcsBusinessV1Controller {
      */
     @DubboReference
     RemoteStopChargingService remoteStopChargingService;
+    
+    @DubboReference
+    RemoteStopChargingServiceTcp remoteStopChargingServiceTcp;
 
     @Autowired
     @Lazy
@@ -575,7 +579,8 @@ public class EvcsBusinessV1Controller {
             responseData.setFailReason((short) 4);   //订单不存在
         } else if (sysChargeOrder.getStartChargeSeqStat() == 1 || sysChargeOrder.getStartChargeSeqStat() == 2 || sysChargeOrder.getStartChargeSeqStat() == 3) {
             //正确的逻辑
-            int result = remoteStopChargingService.stopCharging(sysOperator, queryStopChargeData);
+//            int result = remoteStopChargingService.stopCharging(sysOperator, queryStopChargeData);
+            int result = remoteStopChargingServiceTcp.stopCharging(sysOperator, queryStopChargeData);
             if (result == 0) {
                 responseData.setStartChargeSeqStat((short) 3);
                 responseData.setSuccStat((short) 0);
