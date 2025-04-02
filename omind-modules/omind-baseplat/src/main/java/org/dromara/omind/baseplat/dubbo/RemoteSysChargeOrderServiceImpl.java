@@ -25,6 +25,11 @@ public class RemoteSysChargeOrderServiceImpl implements RemoteSysChargeOrderServ
     }
 
     @Override
+    public SysChargeOrder getChargeOrderByTradeNo(String tradeNo) {
+        return chargeOrderService.getChargeOrderByTradeNo(tradeNo);
+    }
+
+    @Override
     public void save(SysChargeOrder sysChargeOrder) throws BaseException {
         chargeOrderService.save(sysChargeOrder);
     }

@@ -29,6 +29,8 @@ public class RealTimeDataHandler implements IMsgHandler<Status13> {
     @Override
     public Message handler(Status13 message) {
         Channel channel = channelManager.getOrThrow(message.getPileCode());
+
+        // 模拟数据
         if (message.getStatus() == 3) {
             String tradeNo = channelManager.get(message.getPileCode()).attr(ProtocolConstant.TRADE_NO).get();
             if (tradeNo != null) {
@@ -53,8 +55,11 @@ public class RealTimeDataHandler implements IMsgHandler<Status13> {
                 int currentChargeEnergy = RandomUtil.randomInt(2000, 5000);
                 message.setChargedEnergy(message.getChargedEnergy() + currentChargeEnergy);
                 message.setChargedAmount(message.getChargedEnergy() * 2);
+                channel.attr(ProtocolConstant.SIMULATION_CHARGED_ENERGY).set(message.getChargedEnergy());
+                channel.attr(ProtocolConstant.SIMULATION_CHARGED_AMOUNT).set(message.getChargedAmount());
             }
         }
+
         PlatConnectorRealtimeData realTimeData = toRealTimeData(message);
         realtimeDataProducer.sendMsg(realTimeData);
         return ProtocolConstant.NO_RESP;

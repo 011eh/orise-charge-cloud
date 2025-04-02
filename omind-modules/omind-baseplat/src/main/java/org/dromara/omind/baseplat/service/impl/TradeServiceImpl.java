@@ -12,7 +12,10 @@ import org.dromara.omind.baseplat.api.domain.entity.SysChargeOrder;
 import org.dromara.omind.baseplat.api.domain.entity.SysChargeOrderItem;
 import org.dromara.omind.baseplat.api.domain.notifications.NotificationChargeOrderInfoData;
 import org.dromara.omind.baseplat.api.domain.notifications.NotificationEquipChargeStatusData;
-import org.dromara.omind.baseplat.service.*;
+import org.dromara.omind.baseplat.service.SysChargeOrderItemService;
+import org.dromara.omind.baseplat.service.SysChargeOrderService;
+import org.dromara.omind.baseplat.service.SysPriceService;
+import org.dromara.omind.baseplat.service.TradeService;
 import org.dromara.omind.baseplat.service.pile.PlatConnectorRealtimeDataService;
 import org.dromara.omind.baseplat.service.pile.PlatTradingRecordDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -118,6 +123,7 @@ public class TradeServiceImpl implements TradeService {
             }
         }
 
+
         List<PlatConnectorRealtimeData> okList = new ArrayList<>();
         for(String key : hourMap.keySet()){
             okList.add(hourMap.get(key));
@@ -130,6 +136,18 @@ public class TradeServiceImpl implements TradeService {
                 return flag;
             }
         });
+
+        // 按小时处理实时数据列表，每小时只保留充电量最大的数据记录
+        // 步骤：1.按小时分组 2.每小时保留充电量最大的记录 3.按时间排序
+        List<PlatConnectorRealtimeData> result = realtimeDataList.stream()
+                .collect(Collectors.toMap(
+                        data -> DateUtils.getHour(data.getCreateTime()),
+                        Function.identity(),
+                        (existing, replacement) -> existing.getChargingKWH().compareTo(replacement.getChargingKWH()) < 0
+                                ? replacement : existing
+                )).values().stream()
+                .sorted(Comparator.comparing(PlatConnectorRealtimeData::getCreateTime))
+                .toList();
 
         BigDecimal power = new BigDecimal("0.0000");
         for(PlatConnectorRealtimeData realtimeData : okList){
@@ -329,6 +347,8 @@ public class TradeServiceImpl implements TradeService {
         sysChargeOrder.setTotalPower(platTradingRecordData.getFinalKwh());
 
         sysChargeOrder.setStartChargeSeqStat((short) 4);
+
+        // 充电、交易结束，修改枪状态为 占用未充电
         if (sysChargeOrder.getConnectorStatus() == 3) sysChargeOrder.setConnectorStatus(2);
         sysChargeOrder.setCurrentA(new BigDecimal("0.00"));
         sysChargeOrder.setCurrentB(new BigDecimal("0.00"));

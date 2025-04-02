@@ -95,6 +95,8 @@ public class RemoteStartChargingServiceImpl implements RemoteStartChargingServic
             RemoteStartCharge34 charge34 = new RemoteStartCharge34();
             charge34.setTransactionSeqNo(tradeNo);
             charge34.setGunCode(connectorId.substring(connectorId.length() - 2));
+            
+            // 根据用户信息获取对应卡信息配置数据
             charge34.setLogicalCardNo("0000003511355988");
             charge34.setPhysicalCardNo("00000000D14B0A54");
             charge34.setAccountBalance(new BigDecimal("99.99").multiply(new BigDecimal(1000)).intValue());

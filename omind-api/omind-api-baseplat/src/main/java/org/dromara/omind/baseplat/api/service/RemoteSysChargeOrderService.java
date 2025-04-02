@@ -7,6 +7,8 @@ public interface RemoteSysChargeOrderService {
 
 
     SysChargeOrder getChargeOrderByStartChargeSeq(String startChargeSeq);
+    
+    SysChargeOrder getChargeOrderByTradeNo(String TradeNo);
 
     void save(SysChargeOrder sysChargeOrder) throws BaseException;
 
