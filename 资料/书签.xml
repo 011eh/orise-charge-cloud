@@ -1,0 +1,209 @@
+<component name="BookmarksManager">
+    <option name="groups">
+        <GroupState>
+            <option name="bookmarks">
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-mp/src/main/java/org/dromara/omind/mp/controller/v1/ChargeV1Controller.java" />
+                        <entry key="line" value="59" />
+                    </attributes>
+                    <option name="description" value="public R stopCharge(@RequestBody StopChargeRequest stopChargeRequest, SignRequest signRequest){" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/impl/OmindChargeServiceImpl.java" />
+                        <entry key="line" value="233" />
+                    </attributes>
+                    <option name="description" value="QueryStopChargeResponseData queryStopChargeResponseData = omindBillService.billStopChargeDeal(startChargeSeq, connectorId, odBillInfoEntity.getBillId());" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/impl/OmindBillServiceImpl.java" />
+                        <entry key="line" value="172" />
+                    </attributes>
+                    <option name="description" value="QueryStopChargeResponseData queryStopChargeResponseData = hlhtInfoService.stopCharge(queryStopChargeData);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtInfoServiceImpl.java" />
+                        <entry key="line" value="563" />
+                    </attributes>
+                    <option name="description" value="HlhtResult stopChargeResult = bPlatAuthV1Client.stopCharge(url, token, hlhtDtoData);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/controller/hlht/EvcsBusinessV1Controller.java" />
+                        <entry key="line" value="541" />
+                    </attributes>
+                    <option name="description" value="public HlhtResult queryStopCharge(@RequestBody HlhtDto hlhtDto){" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/controller/hlht/EvcsBusinessV1Controller.java" />
+                        <entry key="line" value="582" />
+                    </attributes>
+                    <option name="description" value="int result = remoteStopChargingServiceTcp.stopCharging(sysOperator, queryStopChargeData);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/dubbo/RemoteStopChargingServiceImpl.java" />
+                        <entry key="line" value="51" />
+                    </attributes>
+                    <option name="description" value="RemoteStopChargeReply35 message = (RemoteStopChargeReply35) channelManager.writeWithResponse(pileCode, new RemoteStopCharge36().setGunCode(gunCode));" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtInfoServiceImpl.java" />
+                        <entry key="line" value="581" />
+                    </attributes>
+                    <option name="description" value="omindBillService.updateBillInfo(updateBillInfoObjData);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+            </option>
+            <option name="default" value="true" />
+            <option name="name" value="停止充电" />
+        </GroupState>
+        <GroupState>
+            <option name="bookmarks">
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/web/handler/RealTimeDataHandler.java" />
+                        <entry key="line" value="63" />
+                    </attributes>
+                    <option name="description" value="realtimeDataProducer.sendMsg(realTimeData);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/RealtimeDataConsumer.java" />
+                        <entry key="line" value="201" />
+                    </attributes>
+                    <option name="description" value="chargeOrderService.update(sysChargeOrder);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/RealtimeDataConsumer.java" />
+                        <entry key="line" value="226" />
+                    </attributes>
+                    <option name="description" value="platConnectorRealtimeDataService.saveBatch(realtimeDataSaveList);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/RealtimeDataConsumer.java" />
+                        <entry key="line" value="234" />
+                    </attributes>
+                    <option name="description" value="connectorService.updateBatchById(upList, true);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+            </option>
+            <option name="name" value="充电中" />
+        </GroupState>
+        <GroupState>
+            <option name="bookmarks">
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$APPLICATION_CONFIG_DIR$/workspace/2upwNQjrLqR65OQmi5rzTKTpdX3.xml" />
+                        <entry key="line" value="4" />
+                    </attributes>
+                    <option name="description" value="&lt;option name=&quot;bookmarks&quot;&gt;" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+            </option>
+            <option name="name" value="其他" />
+        </GroupState>
+        <GroupState>
+            <option name="bookmarks">
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/dubbo/notify/RemoteNotifyChargingStatusServiceImpl.java" />
+                        <entry key="line" value="22" />
+                    </attributes>
+                    <option name="description" value="public void remoteStopCharging(SysChargeOrder sysChargeOrder) throws BaseException {" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyChargingStatusServiceImpl.java" />
+                        <entry key="line" value="59" />
+                    </attributes>
+                    <option name="description" value="public void remoteStopCharging(SysChargeOrder sysChargeOrder) {" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/controller/hlht/EvcsBusinessV1Controller.java" />
+                        <entry key="line" value="268" />
+                    </attributes>
+                    <option name="description" value="remoteNotifyConnectorStatusService.realtimeData(connectorId);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyConnectorStatusServiceImpl.java" />
+                        <entry key="line" value="195" />
+                    </attributes>
+                    <option name="description" value="notificationV1Client.notificationStationStatus(sysOperator.getHost(), sysOperator.getOperatorId(),token, hlhtDto, (result, request, response) -&gt; {" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/RealtimeDataConsumer.java" />
+                        <entry key="line" value="236" />
+                    </attributes>
+                    <option name="description" value="remoteNotifyConnectorStatusService.realtimeData(sysConnector.getConnectorId());" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/RealtimeDataConsumer.java" />
+                        <entry key="line" value="246" />
+                    </attributes>
+                    <option name="description" value="remoteNotifyChargingStatusService.realtimeData(sysChargeOrder);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyChargingStatusServiceImpl.java" />
+                        <entry key="line" value="121" />
+                    </attributes>
+                    <option name="description" value="notificationV1Client.notificationEquipChargeStatus(sysOperator.getHost(), sysOperator.getOperatorId(), token, hlhtDto, (result, request, response) -&gt; {" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+            </option>
+            <option name="name" value="通知" />
+        </GroupState>
+        <GroupState>
+            <option name="bookmarks">
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/impl/TradeServiceImpl.java" />
+                        <entry key="line" value="391" />
+                    </attributes>
+                    <option name="description" value="if (!chargeOrderItemService.saveBatch(sysChargeOrder.getStartChargeSeq(), itemList)) {" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+                <BookmarkState>
+                    <attributes>
+                        <entry key="url" value="file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/impl/TradeServiceImpl.java" />
+                        <entry key="line" value="406" />
+                    </attributes>
+                    <option name="description" value="chargeOrderService.update(sysChargeOrder);" />
+                    <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+                </BookmarkState>
+            </option>
+            <option name="name" value="交易记录" />
+        </GroupState>
+        <GroupState>
+            <option name="name" value="开启充电" />
+        </GroupState>
+    </option>
+</component>
