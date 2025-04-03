@@ -1,0 +1,213 @@
+<breakpoint-manager>
+    <breakpoints>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-mp/src/main/java/org/dromara/omind/mp/service/impl/MpServiceImpl.java</url>
+            <option name="group" value="保存" />
+            <line>59</line>
+            <log-expression expression="unionId=&quot;ooEjV5vbOwzEVob09TQxxy2N64rc&quot;" language="JAVA" />
+            <option name="timeStamp" value="28" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-mp/src/main/java/org/dromara/omind/mp/service/impl/GeoServiceImpl.java</url>
+            <option name="group" value="保存" />
+            <line>80</line>
+            <log-expression expression="radius=Double.MAX_VALUE" language="JAVA" />
+            <option name="timeStamp" value="34" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/controller/operation/PriceV1Controller.java</url>
+            <option name="group" value="心跳" />
+            <line>116</line>
+            <option name="timeStamp" value="101" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/HeartBeatConsumer.java</url>
+            <option name="group" value="心跳" />
+            <line>37</line>
+            <option name="timeStamp" value="123" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/HeartBeatConsumer.java</url>
+            <option name="group" value="心跳" />
+            <line>74</line>
+            <option name="timeStamp" value="148" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyConnectorStatusServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>195</line>
+            <option name="timeStamp" value="149" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyConnectorStatusServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>173</line>
+            <option name="timeStamp" value="150" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/impl/UserPlatApiServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>62</line>
+            <option name="timeStamp" value="151" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtTokenServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>49</line>
+            <option name="timeStamp" value="153" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtNotificationServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>479</line>
+            <option name="timeStamp" value="155" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/service/notify/impl/NotifyConnectorStatusServiceImpl.java</url>
+            <option name="group" value="心跳" />
+            <line>198</line>
+            <option name="timeStamp" value="157" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/scheduler/task/UnliveRemoveTask.java</url>
+            <option name="group" value="心跳" />
+            <line>45</line>
+            <option name="timeStamp" value="159" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/mq/consumer/HeartBeatConsumer.java</url>
+            <option name="group" value="心跳" />
+            <line>69</line>
+            <option name="timeStamp" value="161" />
+            <group>心跳</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtInfoServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>506</line>
+            <option name="timeStamp" value="211" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-mp/src/main/java/org/dromara/omind/mp/controller/v1/ChargeV1Controller.java</url>
+            <option name="group" value="充电" />
+            <line>44</line>
+            <option name="timeStamp" value="215" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/netty/protocol/codec/MessageCodec.java</url>
+            <option name="group" value="保存" />
+            <line>247</line>
+            <log-expression expression="calculatedCrc=receivedCrc" language="JAVA" />
+            <option name="timeStamp" value="226" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/netty/protocol/codec/MessageCodec.java</url>
+            <option name="group" value="保存" />
+            <line>256</line>
+            <log-expression expression="ctx.channel().attr(AUTHENTICATED).set(true);" language="JAVA" mode="CODE_FRAGMENT" />
+            <option name="timeStamp" value="227" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/netty/service/ChannelManager.java</url>
+            <option name="group" value="保存" />
+            <line>94</line>
+            <log-expression expression="pingTime=System.currentTimeMillis()" language="JAVA" />
+            <option name="timeStamp" value="228" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/netty/service/ChannelManager.java</url>
+            <option name="group" value="保存" />
+            <line>59</line>
+            <log-expression expression="sequenceId=0" language="JAVA" />
+            <option name="timeStamp" value="262" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/dubbo/RemoteStartChargingServiceImpl.java</url>
+            <option name="group" value="保存" />
+            <line>78</line>
+            <log-expression expression="tradeNo" language="JAVA" />
+            <option name="timeStamp" value="326" />
+            <group>保存</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/impl/OmindChargeServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>118</line>
+            <option name="timeStamp" value="469" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/impl/OmindChargeServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>183</line>
+            <option name="timeStamp" value="470" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-baseplat/src/main/java/org/dromara/omind/baseplat/controller/hlht/EvcsBusinessV1Controller.java</url>
+            <option name="group" value="充电" />
+            <line>423</line>
+            <option name="timeStamp" value="474" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/impl/OmindChargeServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>155</line>
+            <option name="timeStamp" value="478" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/dubbo/RemoteStartChargingServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>108</line>
+            <option name="timeStamp" value="480" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/omind-userplat/src/main/java/org/dromara/omind/userplat/service/hlht/impl/HlhtInfoServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>448</line>
+            <option name="timeStamp" value="482" />
+            <group>充电</group>
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+            <url>file://$PROJECT_DIR$/omind-modules/ykc-tcpplat/src/main/java/org/dromara/omind/tcpplat/dubbo/RemoteStartChargingServiceImpl.java</url>
+            <option name="group" value="充电" />
+            <line>103</line>
+            <option name="timeStamp" value="484" />
+            <group>充电</group>
+        </line-breakpoint>
+    </breakpoints>
+    <default-breakpoints>
+        <breakpoint type="java-exception" />
+        <breakpoint type="javascript-exception" />
+        <breakpoint enabled="true" type="python-exception">
+            <properties notifyOnTerminate="true" exception="BaseException">
+                <option name="notifyOnTerminate" value="true" />
+            </properties>
+        </breakpoint>
+        <breakpoint type="jinja2-exception">
+            <properties exception="TemplateError" />
+        </breakpoint>
+    </default-breakpoints>
+    <option name="defaultGroup" value="充电" />
+</breakpoint-manager>
