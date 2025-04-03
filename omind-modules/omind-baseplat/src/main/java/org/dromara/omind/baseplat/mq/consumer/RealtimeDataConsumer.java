@@ -227,6 +227,7 @@ public class RealtimeDataConsumer {
             platConnectorRealtimeDataService.saveBatch(realtimeDataSaveList);
         }
         if(connectorUpMap != null && connectorUpMap.size() > 0){
+            // 创建充电设备更新列表，用于批量更新充电设备状态
             List<SysConnector> upList = new ArrayList<>();
             for(String key : connectorUpMap.keySet()){
                 upList.add(connectorUpMap.get(key));
@@ -237,6 +238,7 @@ public class RealtimeDataConsumer {
             }
         }
         if(chargingOrderMap != null && chargingOrderMap.size() > 0){
+            // 创建充电订单列表，用于批量处理充电订单状态
             List<SysChargeOrder> orderList = new ArrayList<>();
             for(String key : chargingOrderMap.keySet()){
                 orderList.add(chargingOrderMap.get(key));

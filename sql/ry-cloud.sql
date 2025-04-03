@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : MySQL
+ Source Server         : omind
  Source Server Type    : MySQL
  Source Server Version : 80031 (8.0.31)
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 14/03/2025 20:26:21
+ Date: 03/04/2025 16:07:47
 */
 
 SET NAMES utf8mb4;
@@ -4320,6 +4320,34 @@ INSERT INTO `sys_logininfor` VALUES (1900436769401208834, '000000', 'admin', 'pc
 INSERT INTO `sys_logininfor` VALUES (1900448269562019842, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码已失效', '2025-03-14 15:25:51');
 INSERT INTO `sys_logininfor` VALUES (1900448290495791106, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码已失效', '2025-03-14 15:25:56');
 INSERT INTO `sys_logininfor` VALUES (1900448333663567874, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-14 15:26:06');
+INSERT INTO `sys_logininfor` VALUES (1901531720952393730, '000000', 'admin2222', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码错误', '2025-03-17 15:11:06');
+INSERT INTO `sys_logininfor` VALUES (1901531970123411458, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-17 15:12:05');
+INSERT INTO `sys_logininfor` VALUES (1901532494700818434, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-17 15:14:10');
+INSERT INTO `sys_logininfor` VALUES (1901817972318556162, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-18 10:08:33');
+INSERT INTO `sys_logininfor` VALUES (1901818535269650434, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-18 10:10:48');
+INSERT INTO `sys_logininfor` VALUES (1901829840315633666, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-18 10:55:43');
+INSERT INTO `sys_logininfor` VALUES (1901873520170782722, '000000', 'user', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码错误', '2025-03-18 13:49:17');
+INSERT INTO `sys_logininfor` VALUES (1902181796984922114, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-19 10:14:16');
+INSERT INTO `sys_logininfor` VALUES (1902186282239401986, '000000', 'linhao1', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '密码输入错误1次', '2025-03-19 10:32:05');
+INSERT INTO `sys_logininfor` VALUES (1902186512288587778, '000000', 'linhao1', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-19 10:33:00');
+INSERT INTO `sys_logininfor` VALUES (1902186599194566658, '000000', 'linhao1', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-19 10:33:21');
+INSERT INTO `sys_logininfor` VALUES (1902186656727834626, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-19 10:33:35');
+INSERT INTO `sys_logininfor` VALUES (1902532788385509377, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-20 09:28:59');
+INSERT INTO `sys_logininfor` VALUES (1902923250145464322, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-21 11:20:32');
+INSERT INTO `sys_logininfor` VALUES (1903002726996951041, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-21 16:36:21');
+INSERT INTO `sys_logininfor` VALUES (1904003778227486722, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-24 10:54:10');
+INSERT INTO `sys_logininfor` VALUES (1904364283953713153, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-25 10:46:41');
+INSERT INTO `sys_logininfor` VALUES (1904713062070353921, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '密码输入错误1次', '2025-03-26 09:52:37');
+INSERT INTO `sys_logininfor` VALUES (1904713094446186497, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-26 09:52:44');
+INSERT INTO `sys_logininfor` VALUES (1905102986150014978, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码已失效', '2025-03-27 11:42:02');
+INSERT INTO `sys_logininfor` VALUES (1905103002486829058, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-27 11:42:06');
+INSERT INTO `sys_logininfor` VALUES (1905195366257651713, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-27 17:49:07');
+INSERT INTO `sys_logininfor` VALUES (1905516456494284802, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-28 15:05:01');
+INSERT INTO `sys_logininfor` VALUES (1906535856290709505, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-03-31 10:35:45');
+INSERT INTO `sys_logininfor` VALUES (1906989849995399169, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '1', '验证码已失效', '2025-04-01 16:39:45');
+INSERT INTO `sys_logininfor` VALUES (1906989866969747457, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-04-01 16:39:49');
+INSERT INTO `sys_logininfor` VALUES (1907049961074200577, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-04-01 20:38:37');
+INSERT INTO `sys_logininfor` VALUES (1907239857286037506, '000000', 'admin', 'pc', 'pc', '127.0.0.1', '内网IP', 'MSEdge', 'Windows 10 or Windows Server 2016', '0', '登录成功', '2025-04-02 09:13:11');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -4852,9 +4880,9 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, '000000', 103, 'admin', 'admin', 'sys_user', '11@11.cc', '13124791111', '0', 1750778533953728514, '$2a$10$7JB720yubVSZvUI0rEqK/.xFMN905Jz.xQmnRLuf42xj7iZHgsH5m', '0', '0', '127.0.0.1', '2025-03-14 15:26:06', 103, 1, '2023-12-27 18:25:08', 1, '2025-03-14 15:26:06', '管理员');
+INSERT INTO `sys_user` VALUES (1, '000000', 103, 'admin', 'admin', 'sys_user', '11@11.cc', '13124791111', '0', 1750778533953728514, '$2a$10$7JB720yubVSZvUI0rEqK/.xFMN905Jz.xQmnRLuf42xj7iZHgsH5m', '0', '0', '127.0.0.1', '2025-04-02 09:13:11', 103, 1, '2023-12-27 18:25:08', 1, '2025-04-02 09:13:11', '管理员');
 INSERT INTO `sys_user` VALUES (2, '000000', 105, 'lionli', '疯狂的狮子Li', 'sys_user', 'crazyLionLi@qq.com', '15666666666', '1', NULL, '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2023-12-27 18:25:08', 103, 1, '2023-12-27 18:25:08', 1, '2024-01-23 17:51:29', '测试员1');
-INSERT INTO `sys_user` VALUES (1749732548718219265, '000000', NULL, 'linhao1', 'linhao1', 'sys_user', '', '11', '0', NULL, '$2a$10$4UA/w2tIQ3IaopnwWjQJVebio9xOaSU23ExLkJKFayviG6nTAL5yK', '0', '0', '', NULL, 103, 1, '2024-01-23 17:55:23', 1, '2024-01-23 17:56:17', '11');
+INSERT INTO `sys_user` VALUES (1749732548718219265, '000000', NULL, 'linhao1', 'linhao1', 'sys_user', '', '11', '0', NULL, '$2a$10$7JB720yubVSZvUI0rEqK/.xFMN905Jz.xQmnRLuf42xj7iZHgsH5m', '0', '0', '127.0.0.1', '2025-03-19 10:33:21', 103, 1, '2024-01-23 17:55:23', 1749732548718219265, '2025-03-19 10:33:21', '11');
 INSERT INTO `sys_user` VALUES (1749732916424462337, '000000', NULL, 'linhao2', 'linhao2', 'sys_user', '', '112', '0', NULL, '$2a$10$RLohZuPuPr1LPflm4mZxeOxfH5acAIMAGSa7/Mo/MkAEov/y4pCQq', '0', '0', '', NULL, 103, 1, '2024-01-23 17:56:50', 1, '2024-01-23 17:56:50', '22');
 
 -- ----------------------------
