@@ -1,0 +1,201 @@
+@host=http://localhost:8080
+@userId=1
+@packageId=0
+@outTradeNo=0
+
+### ======================================================
+### 钱包和充值功能全面测试用例
+### ======================================================
+
+### ================ 基本用例 ================
+
+### 获取钱包信息（初始状态或创建新钱包）
+# @name getWallet
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 获取余额流水记录
+# @name balanceFlow
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&pageNum=1&pageSize=10
+Content-Type: application/json
+
+### 获取充值套餐列表
+# @name packageList
+GET {{host}}/userplat/recharge/package/list
+Content-Type: application/json
+
+### ================ 充值流程 ================
+
+### 1. 查看可用充值套餐
+# @name viewPackages
+GET {{host}}/userplat/recharge/package/list
+Content-Type: application/json
+
+### 2. 创建充值订单（支付渠道WXPAY, 交易类型JSAPI）
+# @name createWxpayOrder
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId=1&payChannel=WXPAY&tradeType=JSAPI
+Content-Type: application/json
+
+### 保存微信支付订单号
+@wxOutTradeNo = {{createWxpayOrder.response.body.$.data}}
+
+### 3. 创建充值订单（支付渠道ALIPAY, 交易类型APP）
+# @name createAlipayOrder
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId=2&payChannel=ALIPAY&tradeType=APP
+Content-Type: application/json
+
+### 保存支付宝订单号
+@aliOutTradeNo = {{createAlipayOrder.response.body.$.data}}
+
+### 4. 模拟微信支付成功回调
+# @name wxpayCallback
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo={{wxOutTradeNo}}
+Content-Type: application/json
+
+### 5. 查询钱包状态（验证余额已增加）
+# @name checkWalletAfterWxpay
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 6. 模拟支付宝支付成功回调
+# @name alipayCallback
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo={{aliOutTradeNo}}
+Content-Type: application/json
+
+### 7. 再次查询钱包状态（验证余额再次增加）
+# @name checkWalletAfterAlipay
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 8. 查询余额流水记录（验证有充值记录）
+# @name checkRechargeFlow
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&flowType=1&pageNum=1&pageSize=10
+Content-Type: application/json
+
+### ================ 消费流程 ================
+
+### 1. 查询钱包初始余额
+# @name walletBeforeConsume
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 2. 执行消费操作
+# @name consumeWallet
+POST {{host}}/userplat/wallet/consume
+Content-Type: application/json
+
+{
+  "userId": {{userId}},
+  "amount": 10.00,
+  "relatedId": "testOrder123",
+  "remark": "测试消费-充电服务"
+}
+
+### 3. 查询钱包状态（验证余额已减少）
+# @name walletAfterConsume
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 4. 查询消费流水记录
+# @name checkConsumeFlow
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&flowType=2&pageNum=1&pageSize=10
+Content-Type: application/json
+
+### ================ 充值套餐管理 ================
+
+### 1. 查看当前充值套餐（后台管理）
+# @name listPackagesAdmin
+GET {{host}}/userplat/recharge/package/list/admin?pageNum=1&pageSize=10
+Content-Type: application/json
+
+### 2. 新增充值套餐
+# @name addNewPackage
+POST {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageName": "限时特惠套餐",
+  "rechargeMoney": 99.00,
+  "giftMoney": 19.90,
+  "enableState": 1
+}
+
+### 保存新套餐ID
+@newPackageId = {{addNewPackage.response.body.$.data.packageId}}
+
+### 3. 查询新套餐详情
+# @name getNewPackageDetail
+GET {{host}}/userplat/recharge/package/detail?packageId={{newPackageId}}
+Content-Type: application/json
+
+### 4. 修改充值套餐
+# @name updatePackage
+PUT {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageId": {{newPackageId}},
+  "packageName": "超值特惠套餐",
+  "rechargeMoney": 99.00,
+  "giftMoney": 29.90,
+  "enableState": 1
+}
+
+### 5. 再次查询套餐详情（验证已修改）
+# @name getPackageAfterUpdate
+GET {{host}}/userplat/recharge/package/detail?packageId={{newPackageId}}
+Content-Type: application/json
+
+### 6. 禁用充值套餐
+# @name disablePackage
+PUT {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageId": {{newPackageId}},
+  "enableState": 0
+}
+
+### 7. 查询禁用后的套餐详情
+# @name getDisabledPackage
+GET {{host}}/userplat/recharge/package/detail?packageId={{newPackageId}}
+Content-Type: application/json
+
+### 8. 删除充值套餐
+# @name deletePackage
+DELETE {{host}}/userplat/recharge/package?packageId={{newPackageId}}
+Content-Type: application/json
+
+### 9. 尝试查询已删除套餐（应返回null）
+# @name getDeletedPackage
+GET {{host}}/userplat/recharge/package/detail?packageId={{newPackageId}}
+Content-Type: application/json
+
+### ================ 边缘情况 ================
+
+### 1. 测试无效用户ID
+# @name invalidUser
+GET {{host}}/userplat/wallet/info?userId=9999999
+Content-Type: application/json
+
+### 2. 尝试消费超出余额的金额
+# @name overConsume
+POST {{host}}/userplat/wallet/consume
+Content-Type: application/json
+
+{
+  "userId": {{userId}},
+  "amount": 999999.00,
+  "relatedId": "testOverConsume",
+  "remark": "测试超额消费"
+}
+
+### 3. 尝试使用无效的套餐ID充值
+# @name invalidPackage
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId=999999&payChannel=WXPAY&tradeType=JSAPI
+Content-Type: application/json
+
+### 4. 尝试使用无效订单号回调
+# @name invalidCallback
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo=invalid_order_number
+Content-Type: application/json 

@@ -1,0 +1,33 @@
+@host=http://localhost:8080
+@userId=1
+@relatedId=test123
+@amount=10.00
+
+### ========= 钱包消费流程测试 =========
+
+### 1. 查询用户钱包初始状态
+# @name getWalletBefore
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 2. 调用消费接口
+# @name consumeBalance
+POST {{host}}/userplat/wallet/consume
+Content-Type: application/json
+
+{
+  "userId": {{userId}},
+  "amount": {{amount}},
+  "relatedId": "{{relatedId}}",
+  "remark": "测试消费"
+}
+
+### 3. 查询钱包状态（验证余额已扣减）
+# @name getWalletAfter
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 4. 查询余额流水记录（验证有消费记录）
+# @name getBalanceFlow
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&flowType=2&pageNum=1&pageSize=10
+Content-Type: application/json 

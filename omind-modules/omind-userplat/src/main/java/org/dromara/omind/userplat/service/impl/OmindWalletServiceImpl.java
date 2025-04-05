@@ -1,0 +1,313 @@
+package org.dromara.omind.userplat.service.impl;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.omind.userplat.api.domain.dto.OmindBalanceFlowDto;
+import org.dromara.omind.userplat.api.domain.dto.OmindRechargePackageDto;
+import org.dromara.omind.userplat.api.domain.dto.OmindWalletDto;
+import org.dromara.omind.userplat.api.domain.entity.OmindBalanceFlowEntity;
+import org.dromara.omind.userplat.api.domain.entity.OmindRechargeOrderEntity;
+import org.dromara.omind.userplat.api.domain.entity.OmindUserEntity;
+import org.dromara.omind.userplat.api.domain.entity.OmindWalletEntity;
+import org.dromara.omind.userplat.domain.service.OmindBalanceFlowEntityIService;
+import org.dromara.omind.userplat.domain.service.OmindRechargeOrderEntityIService;
+import org.dromara.omind.userplat.domain.service.OmindWalletEntityIService;
+import org.dromara.omind.userplat.service.OmindRechargePackageService;
+import org.dromara.omind.userplat.service.OmindUserService;
+import org.dromara.omind.userplat.service.OmindWalletService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class OmindWalletServiceImpl implements OmindWalletService {
+
+    private final OmindWalletEntityIService walletEntityIService;
+    private final OmindBalanceFlowEntityIService balanceFlowEntityIService;
+    private final OmindRechargeOrderEntityIService rechargeOrderEntityIService;
+    private final OmindRechargePackageService rechargePackageService;
+    private final OmindUserService userService;
+
+    @Override
+    public OmindWalletDto getUserWallet(Long userId) {
+        LambdaQueryWrapper<OmindWalletEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OmindWalletEntity::getUserId, userId)
+            .eq(OmindWalletEntity::getDelFlag, 0);
+
+        OmindWalletEntity walletEntity = walletEntityIService.getOne(queryWrapper);
+        if (walletEntity == null) {
+            // 如果用户钱包不存在，则创建一个
+            walletEntity = createWallet(userId);
+        }
+
+        OmindWalletDto walletDto = BeanUtil.copyProperties(walletEntity, OmindWalletDto.class);
+        
+        // 设置用户信息
+        OmindUserEntity userEntity = userService.getUserById(userId);
+        if (userEntity != null) {
+            walletDto.setUserName(userEntity.getNickName());
+            walletDto.setMobile(userEntity.getMobile());
+        }
+        
+        return walletDto;
+    }
+
+    @Override
+    public TableDataInfo<OmindBalanceFlowDto> getBalanceFlowList(OmindBalanceFlowDto balanceFlowDto, PageQuery pageQuery) {
+        LambdaQueryWrapper<OmindBalanceFlowEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(balanceFlowDto.getUserId() != null, OmindBalanceFlowEntity::getUserId, balanceFlowDto.getUserId())
+            .eq(balanceFlowDto.getFlowType() != null, OmindBalanceFlowEntity::getFlowType, balanceFlowDto.getFlowType())
+            .ge(balanceFlowDto.getBeginTime() != null, OmindBalanceFlowEntity::getCreateTime, balanceFlowDto.getBeginTime())
+            .le(balanceFlowDto.getEndTime() != null, OmindBalanceFlowEntity::getCreateTime, balanceFlowDto.getEndTime())
+            .eq(OmindBalanceFlowEntity::getDelFlag, 0)
+            .orderByDesc(OmindBalanceFlowEntity::getCreateTime);
+
+        Page<OmindBalanceFlowEntity> page = balanceFlowEntityIService.page(pageQuery.build(), queryWrapper);
+        List<OmindBalanceFlowDto> flowDtoList = BeanUtil.copyToList(page.getRecords(), OmindBalanceFlowDto.class);
+        
+        // 设置流水类型名称
+        for (OmindBalanceFlowDto dto : flowDtoList) {
+            if (dto.getFlowType() != null) {
+                switch (dto.getFlowType()) {
+                    case 1:
+                        dto.setFlowTypeName("充值");
+                        break;
+                    case 2:
+                        dto.setFlowTypeName("消费");
+                        break;
+                    case 3:
+                        dto.setFlowTypeName("退款");
+                        break;
+                    default:
+                        dto.setFlowTypeName("未知");
+                }
+            }
+        }
+        
+        return TableDataInfo.build(flowDtoList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String recharge(Long userId, Long packageId, BigDecimal amount, BigDecimal giftAmount, String payChannel, String tradeType) {
+        // 查询用户钱包
+        OmindWalletEntity walletEntity = getWalletByUserId(userId);
+        if (walletEntity == null) {
+            walletEntity = createWallet(userId);
+        }
+        
+        // 查询充值套餐
+        OmindRechargePackageDto packageDto = rechargePackageService.getRechargePackageById(packageId);
+        if (packageDto == null) {
+            throw new ServiceException("充值套餐不存在");
+        }
+        
+        // 使用套餐金额
+        BigDecimal rechargeMoney = packageDto.getRechargeMoney();
+        BigDecimal giftMoney = packageDto.getGiftMoney();
+        
+        // 生成订单号
+        String outTradeNo = generateOrderNo();
+        
+        // 创建充值订单
+        OmindRechargeOrderEntity orderEntity = new OmindRechargeOrderEntity();
+        orderEntity.setUserId(userId);
+        orderEntity.setPackageId(packageId);
+        orderEntity.setOutTradeNo(outTradeNo);
+        orderEntity.setRechargeMoney(rechargeMoney);
+        orderEntity.setGiftMoney(giftMoney);
+        orderEntity.setPayChannel(payChannel);
+        orderEntity.setTradeType(tradeType);
+        orderEntity.setStatus(0); // 待支付
+        orderEntity.setRefundStatus(0); // 未退款
+        orderEntity.setRefundAmount(BigDecimal.ZERO);
+        orderEntity.setDelFlag(0);
+        
+        boolean result = rechargeOrderEntityIService.save(orderEntity);
+        if (!result) {
+            throw new ServiceException("创建充值订单失败");
+        }
+        
+        // 返回商户订单号，用于调用支付接口
+        return outTradeNo;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean handleRechargeSuccess(String outTradeNo, String transactionId) {
+        // 查询订单
+        LambdaQueryWrapper<OmindRechargeOrderEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OmindRechargeOrderEntity::getOutTradeNo, outTradeNo)
+            .eq(OmindRechargeOrderEntity::getDelFlag, 0);
+            
+        OmindRechargeOrderEntity orderEntity = rechargeOrderEntityIService.getOne(queryWrapper);
+        if (orderEntity == null) {
+            throw new ServiceException("充值订单不存在");
+        }
+        
+        if (orderEntity.getStatus() == 1) {
+            // 已经处理过了，直接返回成功
+            return true;
+        }
+        
+        if (orderEntity.getStatus() != 0) {
+            throw new ServiceException("充值订单状态异常");
+        }
+        
+        // 更新订单状态
+        OmindRechargeOrderEntity updateOrder = new OmindRechargeOrderEntity();
+        updateOrder.setId(orderEntity.getId());
+        updateOrder.setStatus(1); // 支付成功
+        updateOrder.setTransactionId(transactionId);
+        updateOrder.setPayTime(new Date());
+        
+        boolean orderResult = rechargeOrderEntityIService.updateById(updateOrder);
+        if (!orderResult) {
+            throw new ServiceException("更新充值订单失败");
+        }
+        
+        // 查询用户钱包
+        OmindWalletEntity walletEntity = getWalletByUserId(orderEntity.getUserId());
+        if (walletEntity == null) {
+            walletEntity = createWallet(orderEntity.getUserId());
+        }
+        
+        // 计算金额变动
+        BigDecimal totalAmount = orderEntity.getRechargeMoney().add(orderEntity.getGiftMoney());
+        BigDecimal newBalance = walletEntity.getBalance().add(totalAmount);
+        BigDecimal newTotalRecharge = walletEntity.getTotalRecharge().add(orderEntity.getRechargeMoney());
+        
+        // 更新钱包余额
+        OmindWalletEntity updateWallet = new OmindWalletEntity();
+        updateWallet.setId(walletEntity.getId());
+        updateWallet.setBalance(newBalance);
+        updateWallet.setTotalRecharge(newTotalRecharge);
+        
+        boolean walletResult = walletEntityIService.updateById(updateWallet);
+        if (!walletResult) {
+            throw new ServiceException("更新钱包余额失败");
+        }
+        
+        // 创建余额流水记录
+        OmindBalanceFlowEntity flowEntity = new OmindBalanceFlowEntity();
+        flowEntity.setUserId(orderEntity.getUserId());
+        flowEntity.setFlowType(1); // 充值
+        flowEntity.setAmount(totalAmount);
+        flowEntity.setBalance(newBalance);
+        flowEntity.setTradeNo(IdUtil.simpleUUID()); // 内部流水号
+        flowEntity.setOutTradeNo(outTradeNo); // 商户订单号
+        flowEntity.setRelatedId(orderEntity.getId().toString()); // 关联订单ID
+        flowEntity.setRemark("充值" + orderEntity.getRechargeMoney() + "元，赠送" + orderEntity.getGiftMoney() + "元");
+        flowEntity.setDelFlag(0);
+        
+        boolean flowResult = balanceFlowEntityIService.save(flowEntity);
+        if (!flowResult) {
+            throw new ServiceException("创建余额流水记录失败");
+        }
+        
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean consume(Long userId, BigDecimal amount, String relatedId, String remark) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ServiceException("消费金额必须大于0");
+        }
+        
+        // 查询用户钱包
+        OmindWalletEntity walletEntity = getWalletByUserId(userId);
+        if (walletEntity == null) {
+            throw new ServiceException("用户钱包不存在");
+        }
+        
+        // 检查余额是否充足
+        if (walletEntity.getBalance().compareTo(amount) < 0) {
+            throw new ServiceException("余额不足");
+        }
+        
+        // 计算金额变动
+        BigDecimal newBalance = walletEntity.getBalance().subtract(amount);
+        BigDecimal newTotalConsume = walletEntity.getTotalConsume().add(amount);
+        
+        // 更新钱包余额
+        OmindWalletEntity updateWallet = new OmindWalletEntity();
+        updateWallet.setId(walletEntity.getId());
+        updateWallet.setBalance(newBalance);
+        updateWallet.setTotalConsume(newTotalConsume);
+        
+        boolean walletResult = walletEntityIService.updateById(updateWallet);
+        if (!walletResult) {
+            throw new ServiceException("更新钱包余额失败");
+        }
+        
+        // 创建余额流水记录
+        OmindBalanceFlowEntity flowEntity = new OmindBalanceFlowEntity();
+        flowEntity.setUserId(userId);
+        flowEntity.setFlowType(2); // 消费
+        flowEntity.setAmount(amount);
+        flowEntity.setBalance(newBalance);
+        flowEntity.setTradeNo(IdUtil.simpleUUID()); // 内部流水号
+        flowEntity.setRelatedId(relatedId); // 关联ID
+        flowEntity.setRemark(remark);
+        flowEntity.setDelFlag(0);
+        
+        boolean flowResult = balanceFlowEntityIService.save(flowEntity);
+        if (!flowResult) {
+            throw new ServiceException("创建余额流水记录失败");
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 根据用户ID获取钱包信息
+     */
+    private OmindWalletEntity getWalletByUserId(Long userId) {
+        LambdaQueryWrapper<OmindWalletEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OmindWalletEntity::getUserId, userId)
+            .eq(OmindWalletEntity::getDelFlag, 0);
+        return walletEntityIService.getOne(queryWrapper);
+    }
+    
+    /**
+     * 创建用户钱包
+     */
+    private OmindWalletEntity createWallet(Long userId) {
+        OmindWalletEntity walletEntity = new OmindWalletEntity();
+        walletEntity.setUserId(userId);
+        walletEntity.setBalance(BigDecimal.ZERO);
+        walletEntity.setFrozenAmount(BigDecimal.ZERO);
+        walletEntity.setTotalRecharge(BigDecimal.ZERO);
+        walletEntity.setTotalConsume(BigDecimal.ZERO);
+        walletEntity.setStatus(1); // 启用
+        walletEntity.setDelFlag(0);
+        
+        boolean result = walletEntityIService.save(walletEntity);
+        if (!result) {
+            throw new ServiceException("创建用户钱包失败");
+        }
+        
+        return walletEntity;
+    }
+    
+    /**
+     * 生成订单号
+     */
+    private String generateOrderNo() {
+        return DateUtil.format(new Date(), "yyyyMMddHHmmss") + IdUtil.fastSimpleUUID().substring(0, 6);
+    }
+} 

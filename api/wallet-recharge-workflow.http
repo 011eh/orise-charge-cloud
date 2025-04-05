@@ -1,0 +1,84 @@
+@host=http://localhost:8080
+@userId=1
+@packageId=0
+@outTradeNo=0
+
+### ========= 钱包充值流程测试 =========
+
+### 1. 首先查询用户钱包初始状态
+# @name getWalletBefore
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 2. 获取充值套餐列表
+# @name getPackages
+GET {{host}}/userplat/recharge/package/list
+Content-Type: application/json
+
+### 3. 选择一个套餐并创建充值订单
+# @name createOrder
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId=1&payChannel=WXPAY&tradeType=JSAPI
+Content-Type: application/json
+
+### 保存订单号
+@outTradeNo = {{createOrder.response.body.$.data}}
+
+### 4. 模拟支付成功回调
+# @name payCallback
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo={{outTradeNo}}
+Content-Type: application/json
+
+### 5. 查询钱包状态（验证余额已更新）
+# @name getWalletAfter
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 6. 查询余额流水记录
+# @name getBalanceFlow
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&pageNum=1&pageSize=10
+Content-Type: application/json
+
+### ========= 充值套餐管理测试 =========
+
+### 1. 创建新套餐
+# @name createPackage
+POST {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageName": "测试特惠套餐",
+  "rechargeMoney": 66.00,
+  "giftMoney": 6.66,
+  "enableState": 1
+}
+
+### 保存新创建的套餐ID
+@packageId = {{createPackage.response.body.$.data.packageId}}
+
+### 2. 查询套餐详情
+# @name getPackageDetail
+GET {{host}}/userplat/recharge/package/detail?packageId={{packageId}}
+Content-Type: application/json
+
+### 3. 修改套餐
+# @name updatePackage
+PUT {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageId": {{packageId}},
+  "packageName": "测试特惠套餐-已修改",
+  "rechargeMoney": 66.00,
+  "giftMoney": 10.00,
+  "enableState": 1
+}
+
+### 4. 再次查询套餐详情（验证已修改）
+# @name getPackageDetailAfterUpdate
+GET {{host}}/userplat/recharge/package/detail?packageId={{packageId}}
+Content-Type: application/json
+
+### 5. 删除套餐
+# @name deletePackage
+DELETE {{host}}/userplat/recharge/package?packageId={{packageId}}
+Content-Type: application/json 

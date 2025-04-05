@@ -1,0 +1,77 @@
+@host=http://localhost:8080
+@userId=1
+@packageId=2
+@outTradeNo=202405041234567890
+
+### ======== 钱包管理接口 ========
+
+### 获取用户钱包信息
+GET {{host}}/userplat/wallet/info?userId={{userId}}
+Content-Type: application/json
+
+### 获取余额流水记录
+GET {{host}}/userplat/wallet/flow/list?userId={{userId}}&pageNum=1&pageSize=10
+Content-Type: application/json
+
+### 创建充值订单
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId={{packageId}}&payChannel=WXPAY&tradeType=JSAPI
+Content-Type: application/json
+
+### ======== 充值套餐接口 ========
+
+### 获取充值套餐列表
+GET {{host}}/userplat/recharge/package/list
+Content-Type: application/json
+
+### 获取充值套餐列表（后台管理）
+GET {{host}}/userplat/recharge/package/list/admin?pageNum=1&pageSize=10&enableState=1
+Content-Type: application/json
+
+### 获取充值套餐详情
+GET {{host}}/userplat/recharge/package/detail?packageId={{packageId}}
+Content-Type: application/json
+
+### 新增充值套餐
+POST {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageName": "测试套餐",
+  "rechargeMoney": 88.00,
+  "giftMoney": 8.80,
+  "enableState": 1
+}
+
+### 修改充值套餐
+PUT {{host}}/userplat/recharge/package
+Content-Type: application/json
+
+{
+  "packageId": {{packageId}},
+  "packageName": "测试套餐-已修改",
+  "rechargeMoney": 88.00,
+  "giftMoney": 12.00,
+  "enableState": 1
+}
+
+### 删除充值套餐
+DELETE {{host}}/userplat/recharge/package?packageId={{packageId}}
+Content-Type: application/json
+
+### ======== 支付回调接口 ========
+
+### 充值支付成功回调
+POST {{host}}/userplat/pay/callback/recharge/success?outTradeNo={{outTradeNo}}&transactionId=transaction_{{outTradeNo}}
+Content-Type: application/json
+
+### 模拟支付成功（仅用于测试）
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo={{outTradeNo}}
+Content-Type: application/json
+
+### ======== 常用流程示例 ========
+
+### 1. 获取充值套餐列表
+### 2. 创建充值订单（选择套餐进行充值）
+### 3. 支付成功回调（通常由支付平台调用，这里用模拟接口）
+### 4. 查询钱包余额
+### 5. 查询余额流水记录
