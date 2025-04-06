@@ -15,6 +15,11 @@
     </description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>0.2.16</version>
+        </dependency>
 
         <!-- SpringCloud Alibaba Nacos -->
         <dependency>

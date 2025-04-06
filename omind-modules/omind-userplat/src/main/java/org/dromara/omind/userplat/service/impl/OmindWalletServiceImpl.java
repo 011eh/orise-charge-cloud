@@ -103,7 +103,8 @@ public class OmindWalletServiceImpl implements OmindWalletService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String recharge(Long userId, Long packageId, BigDecimal amount, BigDecimal giftAmount, String payChannel, String tradeType) {
-        // 查询用户钱包
+        
+        // 查询用户钱包，不存在则创建
         OmindWalletEntity walletEntity = getWalletByUserId(userId);
         if (walletEntity == null) {
             walletEntity = createWallet(userId);
@@ -152,7 +153,8 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         LambdaQueryWrapper<OmindRechargeOrderEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(OmindRechargeOrderEntity::getOutTradeNo, outTradeNo)
             .eq(OmindRechargeOrderEntity::getDelFlag, 0);
-            
+        
+        // 验证订单信息
         OmindRechargeOrderEntity orderEntity = rechargeOrderEntityIService.getOne(queryWrapper);
         if (orderEntity == null) {
             throw new ServiceException("充值订单不存在");

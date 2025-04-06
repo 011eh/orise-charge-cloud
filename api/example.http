@@ -1,7 +1,7 @@
-@host=http://localhost:8080
+@host=http://localhost:9805
 @userId=1
-@packageId=2
-@outTradeNo=202405041234567890
+@packageId=4
+@outTradeNo=2025040610363007259f
 
 ### ======== 钱包管理接口 ========
 
