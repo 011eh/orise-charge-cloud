@@ -65,4 +65,21 @@ public class WxProperties {
     @Value("${wx.pay.payCallback}")
     private String payCallback;
 
+    @Value("${wx.pay.appId}")
+    private String payAppId;
+
+    @Value("${wx.pay.apiV3Key}")
+    private String apiV3Key;
+
+    @Value("${wx.pay.merchantId}")
+    private String merchantId;
+
+    @Value("${wx.pay.merchantSerialNumber}")
+    private String merchantSerialNumber;
+
+    @Value("${wx.pay.privateKey}")
+    private String privateKey;
+
+    @Value("${wx.pay.notifyUrl}")
+    private String notifyUrl;
 }

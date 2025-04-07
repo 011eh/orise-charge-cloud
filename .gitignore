@@ -3,3 +3,4 @@ logs
 **/target
 /.specstory/
 /.vscode
+/omind-modules/omind-userplat/src/main/resources/wxpayValue.yml

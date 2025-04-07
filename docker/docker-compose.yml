@@ -62,6 +62,7 @@ services:
         ipv4_address: 172.25.0.3
 
   mysql:
+    restart: always
     image: mysql:8.0.31
     container_name: mysql
     logging:
@@ -98,6 +99,7 @@ services:
         ipv4_address: 172.25.0.5
 
   redis:
+    restart: always
     image: redis:6.2.7
     container_name: redis
     logging:
@@ -122,7 +124,7 @@ services:
         ipv4_address: 172.25.0.7
 
   xxl-job:
-#    restart: always
+    restart: always
     image: xuxueli/xxl-job-admin:2.3.1
     container_name: xxl-job
     logging:
@@ -142,7 +144,7 @@ services:
         ipv4_address: 172.25.0.9
 
   rabbitmq:
-#    restart: always
+    restart: always
     image: rabbitmq:3.10.6-management
     container_name: rabbitmq
     logging:
@@ -165,7 +167,7 @@ services:
         ipv4_address: 172.25.0.11
 
   minio:
-#    restart: always
+    restart: always
     image: minio/minio:RELEASE.2023-03-24T21-41-23Z
     container_name: minio
     logging:
@@ -208,7 +210,7 @@ services:
         ipv4_address: 172.25.0.15
 
   nacos:
-#    restart: always
+    restart: always
     image: nacos/nacos-server:v2.1.1
     #    image: nacos/nacos-server:v2.1.2-slim
     container_name: nacos

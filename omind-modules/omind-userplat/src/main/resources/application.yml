@@ -31,3 +31,4 @@ spring:
       - optional:nacos:datasource.yml
       - optional:nacos:omind-user-mq.yml
       - optional:nacos:${spring.application.name}.yml
+      - wxpayValue.yml
