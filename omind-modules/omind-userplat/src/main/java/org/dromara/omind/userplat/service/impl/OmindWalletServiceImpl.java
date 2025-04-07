@@ -13,6 +13,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.omind.userplat.api.domain.dto.OmindBalanceFlowDto;
 import org.dromara.omind.userplat.api.domain.dto.OmindRechargePackageDto;
 import org.dromara.omind.userplat.api.domain.dto.OmindWalletDto;
+import org.dromara.omind.userplat.api.domain.dto.PaymentResponseDto;
 import org.dromara.omind.userplat.api.domain.entity.OmindBalanceFlowEntity;
 import org.dromara.omind.userplat.api.domain.entity.OmindRechargeOrderEntity;
 import org.dromara.omind.userplat.api.domain.entity.OmindUserEntity;
@@ -23,6 +24,8 @@ import org.dromara.omind.userplat.domain.service.OmindWalletEntityIService;
 import org.dromara.omind.userplat.service.OmindRechargePackageService;
 import org.dromara.omind.userplat.service.OmindUserService;
 import org.dromara.omind.userplat.service.OmindWalletService;
+import org.dromara.omind.userplat.service.PaymentService;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,7 @@ public class OmindWalletServiceImpl implements OmindWalletService {
     private final OmindRechargeOrderEntityIService rechargeOrderEntityIService;
     private final OmindRechargePackageService rechargePackageService;
     private final OmindUserService userService;
+    private final ObjectProvider<PaymentService> paymentServices;
 
     @Override
     public OmindWalletDto getUserWallet(Long userId) {
@@ -102,7 +106,7 @@ public class OmindWalletServiceImpl implements OmindWalletService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String recharge(Long userId, Long packageId, BigDecimal amount, BigDecimal giftAmount, String payChannel, String tradeType) {
+    public PaymentResponseDto recharge(Long userId, Long packageId, String payChannel, String tradeType) {
         
         // 查询用户钱包，不存在则创建
         OmindWalletEntity walletEntity = getWalletByUserId(userId);
@@ -141,9 +145,22 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         if (!result) {
             throw new ServiceException("创建充值订单失败");
         }
-        
-        // 返回商户订单号，用于调用支付接口
-        return outTradeNo;
+
+        // 根据支付渠道和交易类型选择合适的支付服务
+        PaymentService matchedPaymentService = paymentServices.stream()
+                .filter(service -> service.supports(payChannel, tradeType))
+                .findFirst()
+                .orElseThrow(() -> new ServiceException("不支持的支付渠道或交易类型: " + payChannel + ", " + tradeType));
+
+        // 创建支付并获取响应
+        PaymentResponseDto paymentResponse = matchedPaymentService.createPaymentWithResponse(
+                userId,
+                rechargeMoney,
+                "充值订单：" + outTradeNo,
+                outTradeNo
+        );
+
+        return paymentResponse;
     }
 
     @Override

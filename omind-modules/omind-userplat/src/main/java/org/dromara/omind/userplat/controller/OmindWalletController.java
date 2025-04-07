@@ -13,6 +13,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.omind.userplat.api.domain.dto.OmindBalanceFlowDto;
 import org.dromara.omind.userplat.api.domain.dto.OmindWalletDto;
+import org.dromara.omind.userplat.api.domain.dto.PaymentResponseDto;
 import org.dromara.omind.userplat.service.OmindWalletService;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,12 +53,12 @@ public class OmindWalletController extends BaseController {
      */
     @Operation(summary = "创建充值订单")
     @PostMapping("/recharge")
-    public R<String> recharge(@Parameter(description = "用户ID") @RequestParam @NotNull(message = "用户ID不能为空") Long userId,
-                              @Parameter(description = "套餐ID") @RequestParam @NotNull(message = "套餐ID不能为空") Long packageId,
-                              @Parameter(description = "支付渠道: WXPAY-微信支付，ALIPAY-支付宝") @RequestParam @NotNull(message = "支付渠道不能为空") String payChannel,
-                              @Parameter(description = "交易类型: JSAPI,APP等") @RequestParam @NotNull(message = "交易类型不能为空") String tradeType) {
+    public R<PaymentResponseDto> recharge(@Parameter(description = "用户ID") @RequestParam @NotNull(message = "用户ID不能为空") Long userId,
+                                          @Parameter(description = "套餐ID") @RequestParam @NotNull(message = "套餐ID不能为空") Long packageId,
+                                          @Parameter(description = "支付渠道: WXPAY-微信支付，ALIPAY-支付宝") @RequestParam @NotNull(message = "支付渠道不能为空") String payChannel,
+                                          @Parameter(description = "交易类型: JSAPI,APP等") @RequestParam @NotNull(message = "交易类型不能为空") String tradeType) {
         // 通过套餐ID，调用套餐服务获取套餐金额和赠送金额信息，先简化处理，实际应在service中处理
-        return R.ok(walletService.recharge(userId, packageId, null, null, payChannel, tradeType));
+        return R.ok(walletService.recharge(userId, packageId, payChannel, tradeType));
     }
 
     /**

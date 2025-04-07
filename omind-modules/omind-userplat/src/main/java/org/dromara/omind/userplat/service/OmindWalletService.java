@@ -4,7 +4,7 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.omind.userplat.api.domain.dto.OmindBalanceFlowDto;
 import org.dromara.omind.userplat.api.domain.dto.OmindWalletDto;
-import org.dromara.omind.userplat.api.domain.entity.OmindWalletEntity;
+import org.dromara.omind.userplat.api.domain.dto.PaymentResponseDto;
 
 import java.math.BigDecimal;
 
@@ -33,15 +33,15 @@ public interface OmindWalletService {
     /**
      * 充值
      *
-     * @param userId       用户ID
-     * @param packageId    套餐ID
-     * @param amount       充值金额
-     * @param giftAmount   赠送金额
-     * @param payChannel   支付渠道：WXPAY-微信支付，ALIPAY-支付宝
-     * @param tradeType    交易类型：JSAPI,APP等
+     * @param userId     用户ID
+     * @param packageId  套餐ID
+     * @param amount     充值金额
+     * @param giftAmount 赠送金额
+     * @param payChannel 支付渠道：WXPAY-微信支付，ALIPAY-支付宝
+     * @param tradeType  交易类型：JSAPI,APP等
      * @return 商户订单号
      */
-    String recharge(Long userId, Long packageId, BigDecimal amount, BigDecimal giftAmount, String payChannel, String tradeType);
+    PaymentResponseDto recharge(Long userId, Long packageId, String payChannel, String tradeType);
 
     /**
      * 充值成功回调处理
