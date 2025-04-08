@@ -254,9 +254,9 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         }
         
         // 检查余额是否充足
-        if (walletEntity.getBalance().compareTo(amount) < 0) {
-            throw new ServiceException("余额不足");
-        }
+//        if (walletEntity.getBalance().compareTo(amount) < 0) {
+//            throw new ServiceException("余额不足");
+//        }
         
         // 计算金额变动
         BigDecimal newBalance = walletEntity.getBalance().subtract(amount);

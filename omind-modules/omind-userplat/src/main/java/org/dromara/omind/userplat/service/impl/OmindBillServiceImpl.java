@@ -14,7 +14,6 @@ import org.dromara.common.core.utils.DateUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.RedisUtils;
-import org.dromara.omind.userplat.api.domain.datas.ChargeDetailData;
 import org.dromara.omind.userplat.api.domain.entity.*;
 import org.dromara.omind.userplat.api.domain.notifications.NotificationChargeOrderInfoData;
 import org.dromara.omind.userplat.api.domain.notifications.NotificationEquipChargeStatusData;
@@ -37,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,6 +75,9 @@ public class OmindBillServiceImpl implements OmindBillService {
 
     @Autowired
     private LockTemplate lockTemplate;
+
+    @Autowired
+    private OmindWalletService walletService;
 
     @Override
     public OmindBillEntity get(String startChargeSeq) {
@@ -421,6 +422,35 @@ public class OmindBillServiceImpl implements OmindBillService {
 
                     BigDecimal oriRealPayMoney = realPayMoney;
 
+                    // 账单处理成功后，使用钱包服务进行消费处理
+                    log.info("开始处理账单消费, 用户ID: {}, 金额: {}, 订单号: {}", odBillInfo.getUserId(),
+                            realPayMoney, notificationChargeOrderInfoData.getStartChargeSeq());
+
+                    // 调用钱包服务进行消费
+                    boolean consumeResult = walletService.consume(
+                            odBillInfo.getUserId(),
+                            realPayMoney,
+                            notificationChargeOrderInfoData.getStartChargeSeq(),
+                            "充电消费"
+                    );
+
+                    // 记录消费结果
+                    if (consumeResult) {
+                        log.info("账单消费处理成功, 用户ID: {}, 金额: {}, 订单号: {}",
+                                odBillInfo.getUserId(),
+                                realPayMoney,
+                                notificationChargeOrderInfoData.getStartChargeSeq());
+
+                    } else {
+                        log.error("账单消费处理失败, 用户ID: {}, 金额: {}, 订单号: {}",
+                                odBillInfo.getUserId(),
+                                realPayMoney,
+                                notificationChargeOrderInfoData.getStartChargeSeq());
+                    }
+                    if (!consumeResult) {
+                        return;
+                    }
+
                     //更新充值订单表支付实际金额和订单状态
                     log.info("charge-order-info----realpaymoney=" + realPayMoney);
                     OmindBillEntity updateBillInfoObjData = new OmindBillEntity();
@@ -502,6 +532,34 @@ public class OmindBillServiceImpl implements OmindBillService {
         updateBillInfoObjData.setPayState((short) 1);
         selfService.updateBillInfo(updateBillInfoObjData);
 
+        // 强制结束账单后进行消费处理
+        if (odBillEntity.getUserId() != null && realPayMoney.compareTo(BigDecimal.ZERO) > 0) {
+            try {
+                log.info("开始处理强制结束账单消费, 用户ID: {}, 金额: {}, 订单号: {}",
+                        odBillEntity.getUserId(), realPayMoney, odBillEntity.getStartChargeSeq());
+
+                // 调用钱包服务进行消费
+                boolean consumeResult = walletService.consume(
+                        odBillEntity.getUserId(),
+                        realPayMoney,
+                        odBillEntity.getStartChargeSeq(),
+                        "强制结束充电消费"
+                );
+
+                // 记录消费结果
+                if (consumeResult) {
+                    log.info("强制结束账单消费处理成功, 用户ID: {}, 金额: {}, 订单号: {}",
+                            odBillEntity.getUserId(), realPayMoney, odBillEntity.getStartChargeSeq());
+
+                } else {
+                    log.error("强制结束账单消费处理失败, 用户ID: {}, 金额: {}, 订单号: {}",
+                            odBillEntity.getUserId(), realPayMoney, odBillEntity.getStartChargeSeq());
+                }
+            } catch (Exception e) {
+                log.error("强制结束账单消费处理异常", e);
+                // 消费失败不影响订单完成，只记录日志
+            }
+        }
     }
 
     @Override
