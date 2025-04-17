@@ -1,4 +1,4 @@
-@host=http://localhost:8080
+@host=http://localhost:9805
 @userId=1
 @packageId=0
 @outTradeNo=0
@@ -86,7 +86,7 @@ Content-Type: application/json
 
 {
   "userId": {{userId}},
-  "amount": 10.00,
+  "amount": 50.00,
   "relatedId": "testOrder123",
   "remark": "测试消费-充电服务"
 }

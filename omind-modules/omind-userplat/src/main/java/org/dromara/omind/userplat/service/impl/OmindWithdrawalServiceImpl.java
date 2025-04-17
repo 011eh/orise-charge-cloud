@@ -327,8 +327,8 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
                 giftFlowEntity.setUserId(withdrawalRecord.getUserId());
                 giftFlowEntity.setFlowType(3); // 退款/提现
                 giftFlowEntity.setAmount(totalGiftAmountToDeduct.negate()); // 使用负数表示减少
-                giftFlowEntity.setBalance(wallet.getBalance());
-                giftFlowEntity.setTradeNo(IdUtil.simpleUUID()); // 内部流水号
+//                giftFlowEntity.setBalance(wallet.getBalance());
+                giftFlowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
                 giftFlowEntity.setOutTradeNo(outRefundNo + "-GIFT"); // 商户退款单号-赠送金额
                 if (relatedOrderIds.length() > 0) {
                     giftFlowEntity.setRelatedId(relatedOrderIds.toString());
@@ -361,8 +361,8 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
             flowEntity.setUserId(withdrawalRecord.getUserId());
             flowEntity.setFlowType(3); // 退款/提现
             flowEntity.setAmount(withdrawalRecord.getAmount().negate()); // 使用负数表示减少
-            flowEntity.setBalance(wallet.getBalance().add(withdrawalRecord.getAmount())); // 这里记录扣除赠送金额前的余额
-            flowEntity.setTradeNo(IdUtil.simpleUUID()); // 内部流水号
+//            flowEntity.setBalance(wallet.getBalance().add(withdrawalRecord.getAmount())); // 这里记录扣除赠送金额前的余额
+            flowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
             flowEntity.setOutTradeNo(outRefundNo); // 商户退款单号
             // 如果有关联订单ID，添加到关联ID字段
             if (relatedOrderIds.length() > 0) {

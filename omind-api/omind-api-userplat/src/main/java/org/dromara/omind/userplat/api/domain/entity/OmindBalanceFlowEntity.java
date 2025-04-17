@@ -32,7 +32,7 @@ public class OmindBalanceFlowEntity extends TenantEntity {
     private Long userId;
 
     /**
-     * 流水类型：1-充值，2-消费，3-退款
+     * 流水类型：1-充值，2-消费，3-退款（提现）
      */
     private Integer flowType;
 
@@ -42,14 +42,46 @@ public class OmindBalanceFlowEntity extends TenantEntity {
     private BigDecimal amount;
 
     /**
-     * 变动后余额
+     * 赠送金额
      */
-    private BigDecimal balance;
+    private BigDecimal giftAmount;
+
+    /**
+     * 状态（0-失败，1-成功，2-处理中）
+     */
+    private Integer status;
+
+    /**
+     * 交易前余额
+     */
+    private BigDecimal balanceBefore;
+
+    private BigDecimal balanceAfter;
+
+    /**
+     * 交易前可用余额
+     */
+    private BigDecimal availableBefore;
+
+    /**
+     * 交易后可用余额
+     */
+    private BigDecimal availableAfter;
+
+    /**
+     * 交易前赠送余额
+     */
+    private BigDecimal giftBefore;
+
+    /**
+     * 交易后赠送余额
+     */
+    private BigDecimal giftAfter;
 
     /**
      * 交易单号
      */
-    private String tradeNo;
+    private String transactionNo;
 
     /**
      * 外部交易单号
