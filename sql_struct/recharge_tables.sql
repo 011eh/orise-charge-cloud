@@ -85,4 +85,27 @@ CREATE TABLE `omind_recharge_order` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `idx_out_trade_no` (`out_trade_no`) USING BTREE,
   KEY `idx_user_id` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='充值订单表'; 
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='充值订单表';
+
+DROP TABLE IF EXISTS `omind_withdrawal_record`;
+CREATE TABLE `omind_withdrawal_record` (
+    `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '提现记录ID',
+    `user_id` bigint UNSIGNED NOT NULL COMMENT '用户ID',
+    `out_refund_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商户退款单号',
+    `transaction_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '微信支付订单号',
+    `refund_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '微信退款单号',
+    `amount` decimal(10, 2) NOT NULL COMMENT '提现金额',
+    `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'CNY' COMMENT '货币类型',
+    `status` tinyint NOT NULL DEFAULT 0 COMMENT '提现状态：0-处理中，1-提现成功，2-提现失败',
+    `channel` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ORIGINAL' COMMENT '退款渠道：ORIGINAL-原路退款，BALANCE-退回余额',
+    `reason` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '提现原因',
+    `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '备注',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `success_time` datetime DEFAULT NULL COMMENT '成功时间',
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `del_flag` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+    `tenant_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '000000' COMMENT '租户编号',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE KEY `idx_out_refund_no` (`out_refund_no`) USING BTREE,
+    KEY `idx_user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提现记录表'; 
