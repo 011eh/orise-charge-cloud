@@ -1,6 +1,6 @@
 @userId = 1
-@amount = 550
-@outRefundNo = WD2025041715340702c25a4b
+@amount = 100
+@outRefundNo = WD20250418202430c489e866
 
 POST http://localhost:9805/userplat/wallet/withdrawal/apply?
     userId={{userId}}&
@@ -15,5 +15,5 @@ Content-Type: application/json
 {
   "outRefundNo": "{{outRefundNo}}",
   "refundId":"mock_{{outRefundNo}}",
-  "status": "SUCCESS"
+  "status": "e"
 }

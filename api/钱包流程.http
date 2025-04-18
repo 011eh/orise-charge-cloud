@@ -1,0 +1,45 @@
+@host=http://localhost:9805
+@userId=1
+@packageId=4
+@outTradeNo=20250418172920ee219a
+### 创建充值订单
+POST {{host}}/userplat/wallet/recharge?userId={{userId}}&packageId={{packageId}}&payChannel=WXPAY&tradeType=Native
+Content-Type: application/json
+
+### 模拟支付成功（仅用于测试）
+POST {{host}}/userplat/pay/callback/recharge/mock/success?outTradeNo={{outTradeNo}}
+Content-Type: application/json
+
+### 消费
+POST {{host}}/userplat/wallet/consume
+Content-Type: application/json
+
+{
+  "userId": {{userId}},
+  "amount": 70.00,
+  "relatedId": "testOrder123",
+  "remark": "测试消费-充电服务"
+}
+
+### 充值支付成功回调
+POST {{host}}/userplat/pay/callback/recharge/success
+Content-Type: application/json
+Wechatpay-Timestamp: 1743990090
+Wechatpay-Nonce: 18B4aGPqBEUjjUrfbayhPOk0PjCjV2m5
+Wechatpay-Signature: XuGJLAxh2Fc+jLNrsIiOrtcCNaESJw6SINHV4XR6mC7IF6it2yDg6FIhuubE/FbhMlknFgxMKqDvnnmgFDvg89gRfwEpYvXcoa7ZtIX39+f7iFDL0ZF36TyhFdIonPdI76Sto+eoTmxHX8pTSfB9tDUvNlofjgZBlFZFc688B9dyyMxlCYPxpsARPcrUMma2qK1hUxP/emxaszjzG/l5pQT89gn6IcYh3A9TN2pqt5yG+AMx/Jjp+mJTc6iCe/z5VgZOCvyXlXudRRoIjKC8nWLrk1ZAqKMvGpn6P4uT1l40ZxdSwXcZBQRyznHf5K5m7wsnSC2DYLMKaHkButtIPw==
+Wechatpay-Serial: 4D4613E53A9CF61330C1BAD61E9B55ED8630A906
+
+{
+  "id": "12d080d5-10bb-51f9-89a5-63becdb0bd9b",
+  "create_time": "2025-04-07T09:27:16+08:00",
+  "resource_type": "encrypt-resource",
+  "event_type": "TRANSACTION.SUCCESS",
+  "summary": "支付成功",
+  "resource": {
+    "original_type": "transaction",
+    "algorithm": "AEAD_AES_256_GCM",
+    "ciphertext": "IukaO0k1X/iblqa//WIWHMv5BwmozZDzlPxOCCzEOmKx4glgtwYzYmyyU8KOzv/Gsjw8q6KRHbBmgb8x+bLWCCprNYb0YfQIsv8flhLJf34ktqjvXkzGg20Q5eMLIq0+WqZezcYkhVrHC4NhJM0AvGw4p1F+axsr7n4Idz/K/8BC4ILVn/nDRCr2bHoh8cvpYDymvKvoB53cwow9IGDumx75pm8dQvqdQQZv+BJQ+01BWHOcW8HXeLXW39lpzRv9GpIAlS7lWt1Ku1KaoKv6IssdcpcgxJtVw3GP2FmYB7RuzZso+PJYceXxuQRXP0qUlxp4L1MiCpIvm/opaLyMi1II7dqUD9Dypxgpr5bep9ex35mJMrEHqv/RgMTEbe70pSfSi4CIdVk4KhcJE6JuQ+zp8Wl+Xzb7v4J3ftFJrp+FKI8jGKCPuJsZYVW7Z3t48jK1w2q/JhM2sz65cwmkGMbeUC6KARbo7K+wvLkIhZn9uB79jk9BXbkx/0TvkWec4/ogEWKRozKaNXIsFzDrYO3lnL0mxhAH7LRYOnOwN9AfLrx9cz1Lu6miYsbR5z8QOalh2NRFtew=",
+    "associated_data": "transaction",
+    "nonce": "A1rwB8k6lBg8"
+  }
+}

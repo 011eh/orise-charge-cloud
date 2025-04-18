@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.common.tenant.core.TenantEntity;
 
 import java.math.BigDecimal;
@@ -40,17 +39,17 @@ public class OmindWalletEntity extends TenantEntity {
     /**
      * 可用余额(不含赠送金额)
      */
-    private BigDecimal availableBalance;
-
-    /**
-     * 赠送金额
-     */
-    private BigDecimal giftBalance;
+    private BigDecimal rechargeBalance;
 
     /**
      * 冻结金额
      */
-    private BigDecimal frozenAmount;
+    private BigDecimal frozenBalance;
+
+    /**
+     * 冻结充值金额
+     */
+    private BigDecimal frozenRechargeBalance;
 
     /**
      * 累计充值金额
@@ -58,19 +57,15 @@ public class OmindWalletEntity extends TenantEntity {
     private BigDecimal totalRecharge;
 
     /**
-     * 累计获得赠送金额
+     * 累计消费金额
      */
-    private BigDecimal totalGiftReceived;
+    private BigDecimal totalConsumed;
 
     /**
-     * 累计消费赠送金额
+     * 累计消费充值金额
      */
-    private BigDecimal totalGiftConsumed;
+    private BigDecimal totalRechargeConsumed;
 
-    /**
-     * a累计消费金额
-     */
-    private BigDecimal totalConsume;
 
     /**
      * 钱包状态：0-禁用，1-启用

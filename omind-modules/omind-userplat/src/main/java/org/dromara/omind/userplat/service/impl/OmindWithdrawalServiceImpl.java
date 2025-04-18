@@ -75,29 +75,36 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
             throw new ServiceException("用户钱包不存在");
         }
 
-        // 2. 检查累计充值是否足够提现
+        // 2. 检查钱包状态
+        if (wallet.getStatus() != 1) {
+            throw new ServiceException("钱包已被禁用，无法提现");
+        }
+
+        // 3. 检查累计充值是否足够提现
         if (wallet.getTotalRecharge().compareTo(amount) < 0) {
             throw new ServiceException("钱包累计充值余额不足");
         }
 
-        // 3. 检查当前余额是否足够提现
-        if (wallet.getBalance().compareTo(amount) < 0) {
-            throw new ServiceException("钱包余额不足");
+        // 4. 检查当前可用余额是否足够提现
+        if (wallet.getRechargeBalance().compareTo(amount) < 0) {
+            throw new ServiceException("钱包可用余额不足");
         }
 
-        // 4. 冻结提现金额
+        // 5. 冻结提现金额
+        wallet.setRechargeBalance(wallet.getRechargeBalance().subtract(amount));
+        wallet.setFrozenBalance(wallet.getFrozenBalance().add(amount));
+        wallet.setFrozenRechargeBalance(wallet.getFrozenRechargeBalance().add(amount));
         wallet.setBalance(wallet.getBalance().subtract(amount));
-        wallet.setFrozenAmount(wallet.getFrozenAmount().add(amount));
 
         boolean updated = walletEntityIService.updateById(wallet);
         if (!updated) {
             throw new ServiceException("冻结提现金额失败");
         }
 
-        // 5. 生成退款单号
+        // 6. 生成退款单号
         String outRefundNo = "WD" + DateUtil.format(LocalDateTime.now(), "yyyyMMddHHmmss") + IdUtil.fastSimpleUUID().substring(0, 8);
 
-        // 6. 创建提现记录
+        // 7. 创建提现记录
         OmindWithdrawalRecordEntity withdrawalRecord = new OmindWithdrawalRecordEntity();
         withdrawalRecord.setUserId(userId);
         withdrawalRecord.setOutRefundNo(outRefundNo);
@@ -113,7 +120,7 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
             throw new ServiceException("创建提现记录失败");
         }
 
-        // 7. 查询用户最近的充值记录，用于原路退款
+        // 8. 查询用户最近的充值记录，用于原路退款
         LambdaQueryWrapper<OmindRechargeOrderEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(OmindRechargeOrderEntity::getUserId, userId)
                 .eq(OmindRechargeOrderEntity::getStatus, 1) // 支付成功的订单
@@ -125,7 +132,7 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
             throw new ServiceException("未找到可用于退款的充值订单");
         }
 
-        // 8. 处理退款逻辑，可能需要涉及多个充值订单
+        // 9. 处理退款逻辑，可能需要涉及多个充值订单
         BigDecimal remainingAmount = amount;
         String primaryTransactionId = null;
 
@@ -200,12 +207,12 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
         withdrawalRecord.setRemark(reason + " [涉及订单:" + involvedOrderIds.toString() + "]");
         withdrawalRecordService.updateById(withdrawalRecord);
 
-        // 9. 如果剩余金额大于0，说明订单不足以退款
+        // 10. 如果剩余金额大于0，说明订单不足以退款
         if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
             throw new ServiceException("可退款的充值订单金额不足");
         }
 
-        // 10. 调用微信支付退款接口
+        // 11. 调用微信支付退款接口
 //        try {
 //            if (primaryTransactionId != null) {
 //                // 构建退款请求
@@ -269,113 +276,108 @@ public class OmindWithdrawalServiceImpl implements OmindWithdrawalService {
             return false;
         }
 
-        // 记录相关订单ID，用于流水记录
-        StringBuilder relatedOrderIds = new StringBuilder();
+        // 4. 处理不同状态的回调
+        BigDecimal amount = withdrawalRecord.getAmount();
 
-        // 4. 解冻金额并处理用户钱包
         if ("SUCCESS".equals(status)) {
-            // 提现成功，从冻结金额中扣除
-            wallet.setFrozenAmount(wallet.getFrozenAmount().subtract(withdrawalRecord.getAmount()));
+            // 提现成功处理
+            // 在申请提现时，已经从用户可用余额中扣除并冻结了金额
+            // 这里只需要减少冻结金额和总充值金额即可，无需再次减少余额
+            BigDecimal oldBalance = wallet.getBalance();
+            BigDecimal oldRechargeBalance = wallet.getRechargeBalance();
 
-            // 减少累计充值金额（因为提现了部分充值金额）
-            wallet.setTotalRecharge(wallet.getTotalRecharge().subtract(withdrawalRecord.getAmount()));
+            wallet.setFrozenBalance(wallet.getFrozenBalance().subtract(amount));
+            wallet.setFrozenRechargeBalance(wallet.getFrozenRechargeBalance().subtract(amount));
+            wallet.setTotalRecharge(wallet.getTotalRecharge().subtract(amount));
+            // 注意：不再修改wallet.setBalance 和 wallet.setRechargeBalance，因为在申请时已经减少
 
-            // 5. 查询与此提现相关的充值订单
-            LambdaQueryWrapper<OmindRechargeOrderEntity> orderQueryWrapper = new LambdaQueryWrapper<>();
-            orderQueryWrapper.eq(OmindRechargeOrderEntity::getUserId, withdrawalRecord.getUserId())
-                    .in(OmindRechargeOrderEntity::getRefundStatus, 1, 2) // 已部分退款或全额退款的订单
-                    .gt(OmindRechargeOrderEntity::getRefundAmount, 0) // 有退款金额的订单
-                    .eq(OmindRechargeOrderEntity::getDelFlag, 0);
-
-            List<OmindRechargeOrderEntity> refundedOrders = rechargeOrderEntityIService.list(orderQueryWrapper);
-
-            // 计算退款金额对应的赠送金额比例
-            BigDecimal totalGiftAmountToDeduct = BigDecimal.ZERO;
-
-            // 填充相关订单ID并计算相应的赠送金额
-            for (OmindRechargeOrderEntity order : refundedOrders) {
-                if (relatedOrderIds.length() > 0) {
-                    relatedOrderIds.append(",");
-                }
-                relatedOrderIds.append(order.getId());
-
-                // 计算这个订单中退款金额占总充值金额的比例
-                if (order.getRechargeMoney().compareTo(BigDecimal.ZERO) > 0 && order.getGiftMoney().compareTo(BigDecimal.ZERO) > 0) {
-                    // 该订单的总金额 = 充值金额 + 赠送金额
-                    BigDecimal totalOrderAmount = order.getRechargeMoney().add(order.getGiftMoney());
-
-                    // 已退款金额
-                    BigDecimal refundAmount = order.getRefundAmount() != null ? order.getRefundAmount() : BigDecimal.ZERO;
-
-                    // 计算退款比例
-                    BigDecimal refundRatio = refundAmount.divide(totalOrderAmount, 4, BigDecimal.ROUND_HALF_UP);
-
-                    // 根据退款比例计算需要扣减的赠送金额
-                    BigDecimal giftAmountToDeduct = order.getGiftMoney().multiply(refundRatio);
-
-                    // 累加到总需扣减的赠送金额
-                    totalGiftAmountToDeduct = totalGiftAmountToDeduct.add(giftAmountToDeduct);
-                }
-            }
-
-            // 从钱包余额中扣除相应的赠送金额
-            if (totalGiftAmountToDeduct.compareTo(BigDecimal.ZERO) > 0) {
-                wallet.setBalance(wallet.getBalance().subtract(totalGiftAmountToDeduct));
-
-                // 记录赠送金额扣减的流水
-                OmindBalanceFlowEntity giftFlowEntity = new OmindBalanceFlowEntity();
-                giftFlowEntity.setUserId(withdrawalRecord.getUserId());
-                giftFlowEntity.setFlowType(3); // 退款/提现
-                giftFlowEntity.setAmount(totalGiftAmountToDeduct.negate()); // 使用负数表示减少
-//                giftFlowEntity.setBalance(wallet.getBalance());
-                giftFlowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
-                giftFlowEntity.setOutTradeNo(outRefundNo + "-GIFT"); // 商户退款单号-赠送金额
-                if (relatedOrderIds.length() > 0) {
-                    giftFlowEntity.setRelatedId(relatedOrderIds.toString());
-                }
-                giftFlowEntity.setRemark("提现成功扣减赠送金额: " + withdrawalRecord.getReason());
-                giftFlowEntity.setDelFlag(0);
-
-                boolean giftFlowSaved = balanceFlowEntityIService.save(giftFlowEntity);
-                if (!giftFlowSaved) {
-                    log.error("创建赠送金额扣减流水记录失败: {}", outRefundNo);
-                    return false;
-                }
-            }
-
-        } else {
-            // 提现失败，冻结金额返回到余额
-            wallet.setBalance(wallet.getBalance().add(withdrawalRecord.getAmount()));
-            wallet.setFrozenAmount(wallet.getFrozenAmount().subtract(withdrawalRecord.getAmount()));
-        }
-
-        boolean walletUpdated = walletEntityIService.updateById(wallet);
-        if (!walletUpdated) {
-            log.error("更新用户钱包失败: {}", withdrawalRecord.getUserId());
-            return false;
-        }
-
-        // 6. 如果提现成功，记录余额流水
-        if ("SUCCESS".equals(status)) {
+            // 记录提现成功的余额流水
             OmindBalanceFlowEntity flowEntity = new OmindBalanceFlowEntity();
             flowEntity.setUserId(withdrawalRecord.getUserId());
-            flowEntity.setFlowType(3); // 退款/提现
-            flowEntity.setAmount(withdrawalRecord.getAmount().negate()); // 使用负数表示减少
-//            flowEntity.setBalance(wallet.getBalance().add(withdrawalRecord.getAmount())); // 这里记录扣除赠送金额前的余额
+            flowEntity.setFlowType(3); // 提现
+            flowEntity.setAmount(amount);
+            flowEntity.setStatus(1); // 成功
+
+            // 设置交易前后余额（因为本次操作不改变可用余额，所以前后一致）
+            flowEntity.setBalanceBefore(oldBalance);
+            flowEntity.setBalanceAfter(oldBalance);
+            flowEntity.setAvailableBefore(oldRechargeBalance);
+            flowEntity.setAvailableAfter(oldRechargeBalance);
+
             flowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
             flowEntity.setOutTradeNo(outRefundNo); // 商户退款单号
-            // 如果有关联订单ID，添加到关联ID字段
-            if (relatedOrderIds.length() > 0) {
-                flowEntity.setRelatedId(relatedOrderIds.toString());
-            }
-            flowEntity.setRemark("提现成功: " + withdrawalRecord.getReason());
+            flowEntity.setRelatedId(withdrawalRecord.getId().toString()); // 关联提现记录ID
+            flowEntity.setRemark("提现成功");
             flowEntity.setDelFlag(0);
-
-            boolean flowSaved = balanceFlowEntityIService.save(flowEntity);
-            if (!flowSaved) {
-                log.error("创建余额流水记录失败: {}", outRefundNo);
+            
+            boolean flowResult = balanceFlowEntityIService.save(flowEntity);
+            if (!flowResult) {
+                log.error("创建提现成功余额流水记录失败: {}", outRefundNo);
                 return false;
             }
+        } else {
+            // 提现失败处理
+            // 将冻结的金额返还到可用余额
+            BigDecimal oldBalance = wallet.getBalance();
+            BigDecimal oldRechargeBalance = wallet.getRechargeBalance();
+
+            // 减少冻结金额
+            wallet.setFrozenBalance(wallet.getFrozenBalance().subtract(amount));
+            wallet.setFrozenRechargeBalance(wallet.getFrozenRechargeBalance().subtract(amount));
+
+            // 增加可用余额（返还）
+            wallet.setRechargeBalance(wallet.getRechargeBalance().add(amount));
+            wallet.setBalance(wallet.getBalance().add(amount));
+
+            // 记录提现失败返还的余额流水
+            OmindBalanceFlowEntity flowEntity = new OmindBalanceFlowEntity();
+            flowEntity.setUserId(withdrawalRecord.getUserId());
+            flowEntity.setFlowType(4); // 提现失败返还
+            flowEntity.setAmount(amount);
+            flowEntity.setStatus(1); // 成功
+
+            // 设置交易前后余额
+            flowEntity.setBalanceBefore(oldBalance);
+            flowEntity.setBalanceAfter(wallet.getBalance());
+            flowEntity.setAvailableBefore(oldRechargeBalance);
+            flowEntity.setAvailableAfter(wallet.getRechargeBalance());
+
+            flowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
+            flowEntity.setOutTradeNo(outRefundNo); // 商户退款单号
+            flowEntity.setRelatedId(withdrawalRecord.getId().toString()); // 关联提现记录ID
+            flowEntity.setRemark("提现失败，返还冻结金额");
+            flowEntity.setDelFlag(0);
+
+            boolean flowResult = balanceFlowEntityIService.save(flowEntity);
+            if (!flowResult) {
+                log.error("创建提现失败余额流水记录失败: {}", outRefundNo);
+                return false;
+            }
+
+            // 恢复相关订单的退款状态和金额
+            String remark = withdrawalRecord.getRemark();
+            if (remark != null && remark.contains("[涉及订单:")) {
+                String orderIdsStr = remark.substring(remark.indexOf("[涉及订单:") + 7, remark.indexOf("]"));
+                String[] orderIds = orderIdsStr.split(",");
+
+                for (String orderIdStr : orderIds) {
+                    Long orderId = Long.parseLong(orderIdStr.trim());
+                    OmindRechargeOrderEntity order = rechargeOrderEntityIService.getById(orderId);
+                    if (order != null) {
+                        // 恢复退款状态
+                        order.setRefundStatus(0); // 恢复为未退款
+                        order.setRefundAmount(BigDecimal.ZERO); // 清空退款金额
+                        rechargeOrderEntityIService.updateById(order);
+                    }
+                }
+            }
+        }
+
+        // 5. 更新钱包信息
+        boolean walletUpdated = walletEntityIService.updateById(wallet);
+        if (!walletUpdated) {
+            log.error("更新钱包信息失败: {}", withdrawalRecord.getUserId());
+            return false;
         }
 
         return true;

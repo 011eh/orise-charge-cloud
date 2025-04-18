@@ -215,19 +215,15 @@ public class OmindWalletServiceImpl implements OmindWalletService {
 
         // 计算新的余额
         BigDecimal newBalance = walletEntity.getBalance().add(totalAmount);
-        BigDecimal newAvailableBalance = walletEntity.getAvailableBalance().add(rechargeMoney);
-        BigDecimal newGiftBalance = walletEntity.getGiftBalance().add(giftMoney);
+        BigDecimal newRechargeBalance = walletEntity.getRechargeBalance().add(rechargeMoney);
         BigDecimal newTotalRecharge = walletEntity.getTotalRecharge().add(rechargeMoney);
-        BigDecimal newTotalGiftReceived = walletEntity.getTotalGiftReceived().add(giftMoney);
         
         // 更新钱包余额
         OmindWalletEntity updateWallet = new OmindWalletEntity();
         updateWallet.setId(walletEntity.getId());
         updateWallet.setBalance(newBalance);
-        updateWallet.setAvailableBalance(newAvailableBalance);
-        updateWallet.setGiftBalance(newGiftBalance);
+        updateWallet.setRechargeBalance(newRechargeBalance);
         updateWallet.setTotalRecharge(newTotalRecharge);
-        updateWallet.setTotalGiftReceived(newTotalGiftReceived);
         updateWallet.setVersion(walletEntity.getVersion()); // 乐观锁版本号
         
         boolean walletResult = walletEntityIService.updateById(updateWallet);
@@ -246,10 +242,8 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         // 设置交易前后余额
         flowEntity.setBalanceBefore(walletEntity.getBalance());
         flowEntity.setBalanceAfter(newBalance);
-        flowEntity.setAvailableBefore(walletEntity.getAvailableBalance());
-        flowEntity.setAvailableAfter(newAvailableBalance);
-        flowEntity.setGiftBefore(walletEntity.getGiftBalance());
-        flowEntity.setGiftAfter(newGiftBalance);
+        flowEntity.setAvailableBefore(walletEntity.getRechargeBalance());
+        flowEntity.setAvailableAfter(newRechargeBalance);
 
         flowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
         flowEntity.setOutTradeNo(outTradeNo); // 商户订单号
@@ -283,41 +277,19 @@ public class OmindWalletServiceImpl implements OmindWalletService {
             throw new ServiceException("余额不足");
         }
 
-        // 计算消费金额分配（优先使用赠送金额）
-        BigDecimal giftConsume = BigDecimal.ZERO;
-        BigDecimal availableConsume = BigDecimal.ZERO;
-
-        if (walletEntity.getGiftBalance().compareTo(BigDecimal.ZERO) > 0) {
-            // 有赠送金额
-            if (walletEntity.getGiftBalance().compareTo(amount) >= 0) {
-                // 赠送金额足够支付
-                giftConsume = amount;
-            } else {
-                // 赠送金额不够，剩余部分从可用余额支付
-                giftConsume = walletEntity.getGiftBalance();
-                availableConsume = amount.subtract(giftConsume);
-            }
-        } else {
-            // 没有赠送金额，全部从可用余额支付
-            availableConsume = amount;
-        }
-
         // 计算新的余额
         BigDecimal newBalance = walletEntity.getBalance().subtract(amount);
-        BigDecimal newAvailableBalance = walletEntity.getAvailableBalance().subtract(availableConsume);
-        BigDecimal newGiftBalance = walletEntity.getGiftBalance().subtract(giftConsume);
-        BigDecimal newTotalConsume = walletEntity.getTotalConsume().add(amount);
-        BigDecimal newTotalGiftConsumed = walletEntity.getTotalGiftConsumed().add(giftConsume);
+        BigDecimal newRechargeBalance = walletEntity.getRechargeBalance().subtract(amount);
+        BigDecimal newTotalConsume = walletEntity.getTotalConsumed().add(amount);
+        BigDecimal newTotalRechargeConsumed = walletEntity.getTotalRechargeConsumed().add(amount);
         
         // 更新钱包余额
         OmindWalletEntity updateWallet = new OmindWalletEntity();
         updateWallet.setId(walletEntity.getId());
         updateWallet.setBalance(newBalance);
-        updateWallet.setAvailableBalance(newAvailableBalance);
-        updateWallet.setGiftBalance(newGiftBalance);
-        updateWallet.setTotalConsume(newTotalConsume);
-        updateWallet.setTotalGiftConsumed(newTotalGiftConsumed);
-        updateWallet.setVersion(walletEntity.getVersion()); // 乐观锁版本号
+        updateWallet.setRechargeBalance(newRechargeBalance);
+        updateWallet.setTotalConsumed(newTotalConsume);
+        updateWallet.setTotalRechargeConsumed(newTotalRechargeConsumed);
         
         boolean walletResult = walletEntityIService.updateById(updateWallet);
         if (!walletResult) {
@@ -329,17 +301,13 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         flowEntity.setUserId(userId);
         flowEntity.setFlowType(2); // 消费
         flowEntity.setAmount(amount);
-        flowEntity.setGiftAmount(giftConsume); // 记录消费的赠送金额
         flowEntity.setStatus(1); // 成功
 
         // 设置交易前后余额
         flowEntity.setBalanceBefore(walletEntity.getBalance());
         flowEntity.setBalanceAfter(newBalance);
-        flowEntity.setAvailableBefore(walletEntity.getAvailableBalance());
-        flowEntity.setAvailableAfter(newAvailableBalance);
-        flowEntity.setGiftBefore(walletEntity.getGiftBalance());
-        flowEntity.setGiftAfter(newGiftBalance);
-
+        flowEntity.setAvailableBefore(walletEntity.getRechargeBalance());
+        flowEntity.setAvailableAfter(newRechargeBalance);
         flowEntity.setTransactionNo(IdUtil.simpleUUID()); // 内部流水号
         flowEntity.setRelatedId(relatedId); // 关联ID
         flowEntity.setRemark(remark);
@@ -370,13 +338,12 @@ public class OmindWalletServiceImpl implements OmindWalletService {
         OmindWalletEntity walletEntity = new OmindWalletEntity();
         walletEntity.setUserId(userId);
         walletEntity.setBalance(BigDecimal.ZERO);
-        walletEntity.setAvailableBalance(BigDecimal.ZERO);
-        walletEntity.setGiftBalance(BigDecimal.ZERO);
-        walletEntity.setFrozenAmount(BigDecimal.ZERO);
+        walletEntity.setRechargeBalance(BigDecimal.ZERO);
+        walletEntity.setFrozenBalance(BigDecimal.ZERO);
+        walletEntity.setFrozenRechargeBalance(BigDecimal.ZERO);
         walletEntity.setTotalRecharge(BigDecimal.ZERO);
-        walletEntity.setTotalGiftReceived(BigDecimal.ZERO);
-        walletEntity.setTotalGiftConsumed(BigDecimal.ZERO);
-        walletEntity.setTotalConsume(BigDecimal.ZERO);
+        walletEntity.setTotalConsumed(BigDecimal.ZERO);
+        walletEntity.setTotalRechargeConsumed(BigDecimal.ZERO);
         walletEntity.setStatus(1); // 启用
         walletEntity.setVersion(0); // 初始版本号
         walletEntity.setDelFlag(0);
